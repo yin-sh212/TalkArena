@@ -368,8 +368,8 @@ class Orchestrator:
         return str(audio_path)
     
     def _resolve_tts_flag(self, enable_tts: Optional[bool]) -> bool:
-        env_flag = os.environ.get("TTS_ENABLED", "")
-        env_enabled = env_flag.lower() in {"1", "true", "yes", "on"}
+        env_flag = os.environ.get("TTS_ENABLED", "1")  # 默认开启
+        env_disabled = env_flag.lower() in {"0", "false", "no", "off"}
         if enable_tts is None:
-            return env_enabled
+            return not env_disabled
         return enable_tts
