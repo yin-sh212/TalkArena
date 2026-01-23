@@ -60,7 +60,7 @@ def create_ui():
                     voice_input = gr.Audio(
                         sources=["microphone"],
                         type="filepath",
-                        label="🎤 语音输入（录音后自动发送）"
+                        label="🎤 语音输入"
                     )
                 
                 audio_output = gr.Audio(label="🔊 对方回复", autoplay=True)
