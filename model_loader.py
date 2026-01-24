@@ -54,7 +54,8 @@ class LLMLoader:
                 max_tokens=10,
                 timeout=10
             )
-            return response.choices[0].message.content is not None
+            content = response.choices[0].message.content
+            return content is not None and content.strip() != ""
         except Exception as e:
             print(f"[LLMLoader] {model} 不可用: {e}")
             return False
@@ -105,8 +106,11 @@ class LLMLoader:
             return self._generate_local(text, max_new_tokens, temperature)
     
     def _generate_api(self, text: str, max_new_tokens: int, temperature: float) -> str:
-        """使用魔搭 API 生成，带重试"""
+        """使用魔搭 API 生成，带重试和模型轮换"""
         import time
+        
+        # 如果当前模型多次失败，可能需要重新选择模型
+        # 这里简化处理：如果在3次重试中都失败，则在下一次调用时切换模型
         
         for attempt in range(3):
             try:
@@ -126,10 +130,20 @@ class LLMLoader:
                 print(f"[LLMLoader] API响应: {elapsed:.1f}s, finish_reason={finish_reason}")
                 
                 if content is None or content.strip() == "":
-                    print(f"[LLMLoader] 警告: API返回空内容 (attempt {attempt+1}/3)")
+                    print(f"[LLMLoader] 警告: API返回空内容 (attempt {attempt+1}/3). Message: {response.choices[0].message}")
                     if attempt < 2:
-                        time.sleep(1)
+                        # 尝试增加一点延时
+                        time.sleep(2)
                         continue
+                    # 如果三次都空，尝试换个模型（如果还有的话）
+                    print(f"[LLMLoader] 模型 {self.model_name} 持续返回空内容，尝试下架它...")
+                    if self.model_name in self.MODELS_TO_TRY:
+                        self.MODELS_TO_TRY.remove(self.model_name)
+                    if self.MODELS_TO_TRY:
+                        self.model_name = self.MODELS_TO_TRY[0]
+                        print(f"[LLMLoader] 切换到新模型: {self.model_name}")
+                        # 递归尝试一次新模型
+                        return self._generate_api(text, max_new_tokens, temperature)
                     return ""
                 
                 result = content.strip()

@@ -1,0 +1,26 @@
+2026-01-24 18:46:49,721 [INFO] Handlers 初始化模型...
+2026-01-24 18:46:49,721 [INFO] ============================================================
+2026-01-24 18:46:49,721 [INFO] TalkArena Orchestrator 初始化
+2026-01-24 18:46:49,721 [INFO] ============================================================
+2026-01-24 18:46:49,721 [INFO] 加载 LLM 模型...
+2026-01-24 18:46:52,411 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 18:46:52,777 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 18:46:52,931 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 18:46:53,431 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 18:46:53,433 [INFO] 加载 TTS 模型...
+2026-01-24 18:46:54,304 [INFO] 加载 STT 模型...
+2026-01-24 18:46:54,566 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-24 18:46:54,567 [INFO] Handlers 模型初始化完成
+2026-01-24 18:46:56,067 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-24 18:46:56,109 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-24 18:46:56,932 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-24 18:46:58,092 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"
+2026-01-24 18:47:27,911 [INFO] ============================================================
+2026-01-24 18:47:27,913 [INFO] [SESSION 019f73c0] 新对局开始
+2026-01-24 18:47:27,913 [INFO]   场景: 山东人的饭桌
+2026-01-24 18:47:27,913 [INFO]   AI角色: 大舅 / 大妗子 / 表哥
+2026-01-24 18:47:27,913 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-24 18:47:27,914 [INFO] ============================================================
+2026-01-24 18:47:43,511 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 18:47:43,511 [INFO] [救场] Session 019f73c0 触发救场，建议: 您坐着别动，咱们敬酒不劝酒。这第一杯我先干为敬，祝大舅身体健康，万事如意。您二位慢慢来，我先敬过大舅...
+2026-01-24 18:47:43,511 [INFO] [DEBUG] handle_rescue yielding 5 values: 5

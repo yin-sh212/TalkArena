@@ -1,0 +1,59 @@
+2026-01-24 16:54:02,081 [INFO] Handlers 初始化模型...
+2026-01-24 16:54:02,081 [INFO] ============================================================
+2026-01-24 16:54:02,081 [INFO] TalkArena Orchestrator 初始化
+2026-01-24 16:54:02,081 [INFO] ============================================================
+2026-01-24 16:54:02,081 [INFO] 加载 LLM 模型...
+2026-01-24 16:54:04,688 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 16:54:04,692 [INFO] 加载 TTS 模型...
+2026-01-24 16:54:05,570 [INFO] 加载 STT 模型...
+2026-01-24 16:54:05,867 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-24 16:54:05,868 [INFO] Handlers 模型初始化完成
+2026-01-24 16:54:07,499 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-24 16:54:07,545 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-24 16:54:08,092 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-24 16:54:09,620 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"
+2026-01-24 16:54:46,721 [INFO] ============================================================
+2026-01-24 16:54:46,721 [INFO] [SESSION 7d620ec2] 新对局开始
+2026-01-24 16:54:46,721 [INFO]   场景: 山东人的饭桌
+2026-01-24 16:54:46,721 [INFO]   AI角色: 大舅 / 大妗子 / 表哥
+2026-01-24 16:54:46,722 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-24 16:54:46,722 [INFO] ============================================================
+2026-01-24 16:54:54,309 [INFO] --------------------------------------------------
+2026-01-24 16:54:54,309 [INFO] [SESSION 7d620ec2] 第 1 回合
+2026-01-24 16:54:54,309 [INFO] [用户输入] 嗯嗯，大舅身体健康
+2026-01-24 16:54:54,309 [INFO] [犹豫惩罚] 用户思考 7.6s，气场 -6
+2026-01-24 16:54:54,309 [INFO] [气场变动] 用户 44 vs AI 56
+2026-01-24 16:54:54,311 [INFO] [AI思考] 开始生成回复... (模型: GLM-4.7-Flash)
+2026-01-24 16:55:30,843 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 16:56:50,479 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 16:57:07,780 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 16:57:07,781 [WARNING] [_clean_response] 输入文本为空
+2026-01-24 16:57:07,781 [WARNING] [AI思考] LLM返回空，使用fallback回复
+2026-01-24 16:57:07,781 [INFO] [AI回复] (133.5s) （沉默片刻）你说得很有意思，但我不同意。...
+2026-01-24 16:57:07,781 [INFO] [AI思考惩罚] 思考 133.5s，AI气场 -10
+2026-01-24 16:57:18,646 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 16:57:24,122 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 16:57:29,419 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 16:57:29,419 [INFO] [裁判判定] 气场转移: +0
+2026-01-24 16:57:29,419 [INFO] [裁判点评] 势均力敌
+2026-01-24 16:57:29,420 [INFO] [气场结果] 用户 54 -> 54 | AI 46 -> 46
+2026-01-24 16:57:32,487 [INFO] [TTS] 生成语音: outputs\audio\7d620ec2\turn_1.wav
+2026-01-24 16:57:32,487 [INFO] --------------------------------------------------
+2026-01-24 16:58:31,422 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 16:58:32,587 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 16:58:32,587 [INFO] Retrying request to /chat/completions in 0.401029 seconds
+2026-01-24 16:58:33,154 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 16:58:33,154 [INFO] Retrying request to /chat/completions in 0.852445 seconds
+2026-01-24 16:58:34,139 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 16:58:35,220 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 16:58:35,221 [INFO] Retrying request to /chat/completions in 0.499488 seconds
+2026-01-24 16:58:35,860 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 16:58:35,860 [INFO] Retrying request to /chat/completions in 0.986176 seconds
+2026-01-24 16:59:07,523 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 16:59:07,524 [INFO] ============================================================
+2026-01-24 16:59:07,524 [INFO] [SESSION 7d620ec2] 对决结束
+2026-01-24 16:59:07,524 [INFO]   结果: 🤝 势均力敌
+2026-01-24 16:59:07,525 [INFO]   最终气场: 用户 54 vs AI 46
+2026-01-24 16:59:07,525 [INFO]   总回合数: 1
+2026-01-24 16:59:07,525 [INFO] ============================================================
+2026-01-24 16:59:07,526 [INFO] [保存] 对决记录: outputs\sessions\7d620ec2_summary.md

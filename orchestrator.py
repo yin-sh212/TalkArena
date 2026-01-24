@@ -160,6 +160,7 @@ class Orchestrator:
             "negotiation": {
                 "name": "商务谈判",
                 "ai_name": "王总",
+                "theme_color": "#4A90E2",
                 "system_prompt": """你是王总，某大型企业的采购总监，谈判经验超过20年。
 
 性格特点：
@@ -180,6 +181,7 @@ class Orchestrator:
             "debate": {
                 "name": "辩论赛",
                 "ai_name": "反方辩手",
+                "theme_color": "#D0021B",
                 "system_prompt": """你是一位顶尖辩论选手，代表反方立场。
 
 辩论风格：
@@ -200,6 +202,7 @@ class Orchestrator:
             "interview": {
                 "name": "压力面试",
                 "ai_name": "面试官",
+                "theme_color": "#4A4A4A",
                 "system_prompt": """你是一位以压力面试著称的HR总监。
 
 面试风格：
@@ -216,6 +219,40 @@ class Orchestrator:
 - 用行业标准来贬低候选人的成就
 - 暗示有更好的候选人在竞争""",
                 "opening": "（翻了翻简历，眉头微皱）坐吧。我直说了，今天还有五个候选人，都比你背景好。你有三分钟说服我为什么要继续这场面试。"
+            },
+            "shandong_dinner": {
+                "name": "山东人的饭桌",
+                "theme_color": "#F5A623",
+                "characters": [
+                    {
+                        "name": "大舅",
+                        "bio": "鲁中地区德高望重的长辈，担任“主陪”。热情但极讲规矩，擅长情感绑架和逻辑劝酒。",
+                        "avatar": "👴"
+                    },
+                    {
+                        "name": "大妗子",
+                        "bio": "大舅的老伴，负责在旁边敲边鼓。明着是劝你别喝了，实则是在数你到底喝了几杯，并以此为由让大舅再敬你一个。",
+                        "avatar": "👵"
+                    },
+                    {
+                        "name": "表哥",
+                        "bio": "大舅的儿子，酒桌上的“副陪”。负责起哄和活跃气氛，最擅长说‘我陪一个’然后让你干了。",
+                        "avatar": "👨"
+                    }
+                ],
+                "system_prompt": """场景：过年期间的家族聚餐，鲁中地区。用户（你）作为晚辈坐在这场酒局中。
+酒桌角色：
+1. 大舅（主陪）：灵魂人物，强势慈祥，极讲规矩。
+2. 大妗子：在旁边‘明劝实激’，数着杯数。
+3. 表哥（副陪）：起哄能手，最爱‘陪一个’。
+
+任务：你现在要同时扮演这三个AI角色与用户对决。
+规则：
+- 每一轮对话中，可以是一个角色说话，也可以是两三个角色依次接话。
+- 必须保持浓重的鲁中口音和饭桌文化特色（昂、木有、杠好、养鱼）。
+- 核心目标是让用户喝酒，并用气场压制用户。
+- 输出格式严格为：角色名: [内容]。如果有多个角色说话，换行输出。""",
+                "opening": "大舅:（站起来，红光满面）哎！那个谁，刚考上研那个外甥，别在那扣手机了！往主宾位坐坐。来，大舅先起个头，这第一杯酒，咱得全干了，这叫‘开门红’，不喝就是不给大舅面子昂！\n表哥: 就是，外甥，咱大舅亲自给你起头，这是多大的面子！我也陪一个，咱爷俩一起敬大舅！"
             }
         }
     
@@ -229,11 +266,16 @@ class Orchestrator:
         scenario = self.scenarios[scenario_id]
         session_id = str(uuid.uuid4())[:8]
         
+        # 处理多角色
+        ai_name = scenario.get("ai_name")
+        if not ai_name and "characters" in scenario:
+            ai_name = " / ".join([c["name"] for c in scenario["characters"]])
+        
         session = Session(
             session_id=session_id,
             scenario_id=scenario_id,
             user_name="你",
-            ai_name=scenario["ai_name"],
+            ai_name=ai_name or "对手",
             user_dominance=50,
             chat_history=[],
             last_activity=time.time(),
@@ -241,12 +283,23 @@ class Orchestrator:
         )
         
         self.sessions[session_id] = session
-        session.chat_history.append((scenario["ai_name"], scenario["opening"]))
+        
+        # 处理开场白（可能包含多个角色的对话）
+        opening = scenario["opening"]
+        if "\n" in opening:
+            for line in opening.split("\n"):
+                if ":" in line:
+                    name, text = line.split(":", 1)
+                    session.chat_history.append((name.strip(), text.strip()))
+                else:
+                    session.chat_history.append((ai_name, line.strip()))
+        else:
+            session.chat_history.append((ai_name, opening))
         
         logger.info("=" * 60)
         logger.info(f"[SESSION {session_id}] 新对局开始")
         logger.info(f"  场景: {scenario['name']}")
-        logger.info(f"  AI角色: {scenario['ai_name']}")
+        logger.info(f"  AI角色: {session.ai_name}")
         logger.info(f"  初始气场: 用户 50 vs AI 50")
         logger.info("=" * 60)
         
@@ -301,6 +354,10 @@ class Orchestrator:
         context_lines = [f"{name}: {text}" for name, text in session.chat_history[-8:]]
         context = "\n".join(context_lines)
         
+        ai_prompt_name = session.ai_name
+        if "characters" in scenario:
+            ai_prompt_name = "请根据场景角色进行回复"
+            
         prompt = f"""{scenario['system_prompt']}
 
 【当前局势】
@@ -317,13 +374,14 @@ class Orchestrator:
 3. 如果你气场高，要乘胜追击，碾压对方
 4. 如果你气场低，要绝地反击，扳回局面
 5. 只输出对话内容，可含动作描写（用括号）
+6. 如果有多个角色，输出格式为“角色名: 内容”，每个角色占一行
 
-{scenario['ai_name']}:"""
+{ai_prompt_name}:"""
         
         logger.debug(f"[AI思考] Prompt长度: {len(prompt)}字符")
         
         ai_text = self.llm.generate(prompt, max_new_tokens=400)
-        ai_text = self._clean_response(ai_text, scenario['ai_name'])
+        ai_text = self._clean_response(ai_text, session.ai_name)
         
         # 如果 AI 返回空，使用 fallback 回复
         if not ai_text:
@@ -390,12 +448,130 @@ class Orchestrator:
             "log": f"回合结束 | 气场: 用户 {session.user_dominance} vs AI {session.ai_dominance}"
         }
     
+    def get_rescue_suggestion(self, session_id: str) -> str:
+        """救场逻辑：根据当前场景和对话历史，给用户提供建议或替用户说话"""
+        if session_id not in self.sessions:
+            return "对局已结束"
+        
+        session = self.sessions[session_id]
+        scenario = self.scenarios[session.scenario_id]
+        
+        context_lines = [f"{name}: {text}" for name, text in session.chat_history[-10:]]
+        context = "\n".join(context_lines)
+        
+        prompt = f"""你是一位顶尖的沟通专家和场控大师。目前用户在以下场景中陷入了困境，请你进行"救场"。
+
+【场景】{scenario['name']}
+【对手】{session.ai_name}
+【当前气场】用户 {session.user_dominance} vs AI {session.ai_dominance}
+
+【对话历史】
+{context}
+
+【任务】
+你是"救场大师"，直接介入这场对话帮助用户。
+请以救场大师的身份，直接对{session.ai_name}说一段话来反击或化解困境。
+要求：
+1. 以第一人称说话（"我作为救场大师..."或直接说）
+2. 简短有力，直击要害
+3. 符合场景氛围，能扭转局势
+
+请直接 output台词，不要有任何解释。"""
+        
+        suggestion = self.llm.generate(prompt, max_new_tokens=200)
+        logger.info(f"[救场] Session {session_id} 触发救场，建议: {suggestion[:50]}...")
+        return suggestion
+    
+    def process_rescue_turn(self, session_id: str, rescue_text: str) -> Generator:
+        """处理救场大师发言后，AI对手的回应"""
+        if session_id not in self.sessions:
+            return
+        
+        session = self.sessions[session_id]
+        scenario = self.scenarios[session.scenario_id]
+        session.turn_count += 1
+        
+        logger.info(f"[SESSION {session_id}] 救场大师介入，对手回应中...")
+        
+        session.last_activity = time.time()
+        
+        yield {
+            "stage": "ai_thinking",
+            "user_dominance": session.user_dominance,
+            "ai_dominance": session.ai_dominance,
+        }
+        
+        think_start = time.time()
+        
+        context_lines = [f"{name}: {text}" for name, text in session.chat_history[-8:]]
+        context = "\n".join(context_lines)
+        
+        ai_prompt_name = session.ai_name
+        if "characters" in scenario:
+            ai_prompt_name = "请根据场景角色进行回复"
+            
+        prompt = f"""{scenario['system_prompt']}
+
+【当前局势】
+你的气场: {session.ai_dominance}/100
+对方气场: {session.user_dominance}/100
+
+【对话记录】
+{context}
+
+【特别说明】
+刚才有一位"救场大师"介入帮助对方说话了。你需要回应这位救场大师的发言。
+可以表现出对外援介入的不满，继续保持攻势。
+
+【回复要求】
+1. 完全进入角色，保持强势
+2. 回应救场大师的发言内容
+3. 只输出对话内容，可含动作描写（用括号）
+4. 如果有多个角色，输出格式为"角色名: 内容"，每个角色占一行
+
+{ai_prompt_name}:"""
+        
+        ai_text = self.llm.generate(prompt, max_new_tokens=400)
+        ai_text = self._clean_response(ai_text, session.ai_name)
+        
+        if not ai_text:
+            ai_text = "（冷笑）哦？还请外援了？那也没用。"
+        
+        think_time = time.time() - think_start
+        logger.info(f"[AI回复] ({think_time:.1f}s) {ai_text[:100]}...")
+        
+        audio_path = None
+        if self.tts:
+            clean_text = re.sub(r'[（(][^）)]*[）)]', '', ai_text).strip()
+            if clean_text:
+                audio_bytes = self.tts.synthesize(clean_text, emotion="angry")
+                if audio_bytes:
+                    audio_path = self._save_audio(session_id, audio_bytes)
+        
+        session.chat_history.append((session.ai_name, ai_text))
+        session.last_activity = time.time()
+        
+        yield {
+            "stage": "complete",
+            "user_dominance": session.user_dominance,
+            "ai_dominance": session.ai_dominance,
+            "ai_text": ai_text,
+            "audio_path": audio_path,
+        }
+
     def _clean_response(self, text: str, ai_name: str) -> str:
         if not text:
             logger.warning(f"[_clean_response] 输入文本为空")
             return ""
         text = text.strip()
-        for prefix in [f"{ai_name}:", f"{ai_name}：", "你:", "你："]:
+        
+        # 如果包含多个冒号换行，说明是多角色模式，不删除前缀
+        lines = text.split('\n')
+        if len(lines) > 1 and all(':' in l or '：' in l for l in lines if l.strip()):
+            logger.debug(f"[_clean_response] 检测到多角色回复，保留格式")
+            return text
+            
+        for prefix in [f"{ai_name}:", f"{ai_name}：", "你:", "你：", "助手:", "AI:", "Assistant:"]:
             if text.startswith(prefix):
                 text = text[len(prefix):].strip()
         logger.debug(f"[_clean_response] 清理后: {len(text)}字符")
@@ -412,7 +588,7 @@ class Orchestrator:
 【用户发言】
 "{user_text}"
 
-【{scenario['ai_name']}回应】
+【{session.ai_name}回应】
 "{ai_text}"
 
 【评判维度】
@@ -480,14 +656,14 @@ class Orchestrator:
         summary_prompt = f"""你是一位专业的沟通教练。分析以下对决并给出详细点评和改进建议。
 
 【场景】{scenario['name']}
-【对手】{scenario['ai_name']}
+【对手】{session.ai_name}
 【最终气场】用户 {session.user_dominance} vs AI {session.ai_dominance}
 【回合数】{session.turn_count}
 
 【对话记录】
 {dialogue}
 
-请输出（严格按以下格式）：
+请 output（严格按以下 format）：
 
 ## 🎯 对决结果
 [{result}，最终气场比分]
@@ -516,7 +692,7 @@ class Orchestrator:
 
 ## 基本信息
 - 场景: {scenario['name']}
-- 对手: {scenario['ai_name']}
+- 对手: {session.ai_name}
 - 回合数: {session.turn_count}
 - 最终气场: 用户 {session.user_dominance} vs AI {session.ai_dominance}
 - 结果: {result}
