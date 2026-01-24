@@ -355,8 +355,11 @@ class Orchestrator:
         if self.tts:
             clean_text = re.sub(r'[（(][^）)]*[）)]', '', ai_text)
             audio_bytes = self.tts.synthesize(clean_text, emotion=emotion)
-            audio_path = self._save_audio(session_id, audio_bytes)
-            logger.info(f"[TTS] 生成语音: {audio_path}")
+            if audio_bytes:
+                audio_path = self._save_audio(session_id, audio_bytes)
+                logger.info(f"[TTS] 生成语音: {audio_path}")
+            else:
+                logger.warning("[TTS] 语音合成失败，跳过")
         
         session.chat_history.append((session.ai_name, ai_text))
         session.last_activity = time.time()

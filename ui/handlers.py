@@ -1,6 +1,7 @@
 from typing import List, Tuple, Generator
 from orchestrator import Orchestrator, logger
 import gradio as gr
+from ui.user import register_user, get_current_user
 
 _orchestrator_instance = None
 
@@ -117,3 +118,18 @@ def end_session(session_id: str, chat_history: List):
         gr.update(value=file_path, visible=True),
         "🏁 对决已结束"
     )
+
+def handle_user_register(name: str, surname: str, email: str, message: str):
+    """处理用户注册"""
+    if not name.strip():
+        return None
+    
+    user = register_user(
+        name=name.strip(),
+        surname=surname.strip(),
+        email=email.strip(),
+        message=message.strip()
+    )
+    
+    logger.info(f"[用户注册] {user.display_name} (ID: {user.user_id})")
+    return user

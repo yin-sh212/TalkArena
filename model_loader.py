@@ -139,30 +139,71 @@ class TTSLoader:
     def synthesize(self, text: str, emotion: str = "neutral", voice: str = None) -> bytes:
         import asyncio
         import io
+        import threading
         from pydub import AudioSegment
         
         resolved_voice = voice or self._emotion_to_voice(emotion)
         print(f"[TTSLoader] 合成语音: {text[:50]}...")
+        print(f"[TTSLoader] 使用声音: {resolved_voice}")
         
-        async def _synthesize():
-            communicate = self._edge_tts.Communicate(text, resolved_voice)
-            audio_data = b""
-            async for chunk in communicate.stream():
-                if chunk["type"] == "audio":
-                    audio_data += chunk["data"]
-            return audio_data
+        result = [None]
+        error = [None]
         
-        mp3_bytes = asyncio.run(_synthesize())
+        def run_in_thread():
+            async def _synthesize():
+                try:
+                    communicate = self._edge_tts.Communicate(text, resolved_voice)
+                    audio_data = b""
+                    async for chunk in communicate.stream():
+                        if chunk["type"] == "audio":
+                            audio_data += chunk["data"]
+                    return audio_data
+                except Exception as e:
+                    print(f"[TTSLoader] 异常: {type(e).__name__}: {e}")
+                    raise
+            
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                result[0] = loop.run_until_complete(_synthesize())
+            except Exception as e:
+                error[0] = e
+                print(f"[TTSLoader] 线程内异常: {e}")
+            finally:
+                loop.close()
         
-        # MP3 转 WAV
+        thread = threading.Thread(target=run_in_thread)
+        thread.start()
+        thread.join(timeout=30)
+        
+        if error[0]:
+            print(f"[TTSLoader] TTS失败: {error[0]}")
+            return None
+        
+        if not thread.is_alive() and result[0] is None:
+            print("[TTSLoader] 警告: 线程完成但结果为None")
+        
+        mp3_bytes = result[0]
+        
+        if not mp3_bytes or len(mp3_bytes) < 100:
+            print(f"[TTSLoader] 警告: MP3数据为空或过小 ({len(mp3_bytes) if mp3_bytes else 0} bytes)")
+            return None
+        
+        print(f"[TTSLoader] MP3数据大小: {len(mp3_bytes)} bytes")
+        
         mp3_io = io.BytesIO(mp3_bytes)
-        audio = AudioSegment.from_mp3(mp3_io)
-        wav_io = io.BytesIO()
-        audio.export(wav_io, format="wav")
-        wav_bytes = wav_io.getvalue()
+        mp3_io.seek(0)
         
-        print(f"[TTSLoader] ✓ 合成成功，音频大小: {len(wav_bytes)} bytes")
-        return wav_bytes
+        try:
+            audio = AudioSegment.from_mp3(mp3_io)
+            wav_io = io.BytesIO()
+            audio.export(wav_io, format="wav")
+            wav_bytes = wav_io.getvalue()
+            print(f"[TTSLoader] ✓ 合成成功，音频大小: {len(wav_bytes)} bytes")
+            return wav_bytes
+        except Exception as e:
+            print(f"[TTSLoader] MP3转WAV失败: {e}")
+            return mp3_bytes
 
     def _emotion_to_voice(self, emotion: str) -> str:
         emotion_voice_map = {

@@ -22,7 +22,7 @@ vosk>=0.3.45
 pydub>=0.25.0
 scipy>=1.10.0
 soundfile>=0.12.1
-
+nest_asyncio
 # UI & API - Use fully stable older version
 gradio==6.2.0
 
