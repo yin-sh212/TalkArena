@@ -25,8 +25,20 @@ CUSTOM_CSS = """
 
 .scene-select-page > div:last-child {
     flex: 1 !important;
-    background: #FFFFFF !important;
+    background: #E6F0FF !important;
     padding: 40px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.scene-select-page > div:last-child > div {
+    background: white !important;
+    padding: 30px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+    min-width: 300px !important;
 }
 
 /* Page 2: 对话页 */
@@ -35,16 +47,16 @@ CUSTOM_CSS = """
 }
 
 .chat-page > div:first-child {
-    width: 260px !important;
-    min-width: 260px !important;
+    width: 220px !important;
+    min-width: 220px !important;
     background: #E6F0FF !important;
-    padding: 16px !important;
+    padding: 8px !important;
 }
 
 .chat-page > div:last-child {
     flex: 1 !important;
     background: #F5F7FA !important;
-    padding: 20px 40px !important;
+    padding: 10px 20px !important;
     display: flex !important;
     flex-direction: column !important;
 }
@@ -52,9 +64,9 @@ CUSTOM_CSS = """
 /* 品牌标题 */
 .brand-title {
     color: #1a237e;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 800;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .brand-subtitle {
@@ -94,34 +106,34 @@ CUSTOM_CSS = """
 /* 气场仪表盘 */
 .aura-dashboard {
     background: linear-gradient(180deg, #89C4F4 0%, #66A6FF 100%);
-    border-radius: 16px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+    border-radius: 10px;
+    padding: 8px;
+    margin: 6px 0;
+    box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
 }
 
 .aura-header {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     color: #1a237e;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
 .aura-scores {
     display: flex;
     justify-content: space-between;
-    font-size: 48px;
+    font-size: 28px;
     font-weight: 900;
     color: #1a237e;
-    margin-bottom: 15px;
+    margin-bottom: 6px;
 }
 
 .progress-container {
-    height: 20px;
+    height: 10px;
     background: #D8D8D8;
-    border-radius: 10px;
+    border-radius: 5px;
     overflow: hidden;
 }
 
@@ -144,17 +156,24 @@ CUSTOM_CSS = """
     background: #D32F2F !important;
     color: white !important;
     border: none !important;
-    border-radius: 8px !important;
-    margin-top: 20px !important;
+    border-radius: 6px !important;
+    margin-top: 6px !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    padding: 6px 12px !important;
+}
+
+.end-btn:hover {
+    background: #B71C1C !important;
 }
 
 /* 头像区 */
 .avatar-section {
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 30px;
     align-items: flex-end;
-    padding: 10px;
+    padding: 5px;
 }
 
 .avatar-wrapper {
@@ -166,8 +185,8 @@ CUSTOM_CSS = """
 .avatar-circle {
     border-radius: 50%;
     background: white;
-    border: 3px solid #66A6FF;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: 2px solid #66A6FF;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -181,34 +200,47 @@ CUSTOM_CSS = """
 }
 
 .avatar-name {
-    margin-top: 6px;
+    margin-top: 4px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
     color: #333;
 }
 
 .avatar-score {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 900;
     color: #1a237e;
 }
 
 /* 聊天框 */
 .chat-box-container {
-    min-height: 250px !important;
-    max-height: 400px !important;
+    min-height: 200px !important;
+    max-height: 280px !important;
     overflow-y: auto !important;
 }
 
 /* 总结区域 */
 .summary-box {
-    background: #f0f8ff;
-    border: 1px solid #66A6FF;
-    border-radius: 12px;
-    padding: 16px;
-    margin: 10px 0;
-    max-height: 300px;
-    overflow-y: auto;
+    background: #f0f8ff !important;
+    border: 2px solid #66A6FF !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    margin: 10px 0 !important;
+    min-height: 150px !important;
+    max-height: 350px !important;
+    overflow-y: auto !important;
+    color: #333 !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+}
+
+.summary-box h3 {
+    color: #1a237e !important;
+    margin-bottom: 12px !important;
+}
+
+.summary-box p, .summary-box li {
+    color: #333 !important;
 }
 
 /* 返回按钮 */
@@ -223,9 +255,11 @@ CUSTOM_CSS = """
 /* 输入区 */
 .input-row {
     background: #6495ED !important;
-    border-radius: 25px !important;
-    padding: 6px 12px !important;
-    margin-top: 15px !important;
+    border-radius: 20px !important;
+    padding: 4px 10px !important;
+    margin-top: 8px !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 .input-row > div {
@@ -245,14 +279,21 @@ CUSTOM_CSS = """
 }
 
 .input-row button {
-    background: rgba(255,255,255,0.3) !important;
-    color: white !important;
+    background: rgba(255,255,255,0.9) !important;
+    color: #4A90E2 !important;
     border: none !important;
-    border-radius: 50% !important;
-    width: 32px !important;
+    border-radius: 16px !important;
+    min-width: 60px !important;
     height: 32px !important;
-    min-width: 32px !important;
-    padding: 0 !important;
+    padding: 0 16px !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+}
+
+.send-btn {
+    background: rgba(255,255,255,0.9) !important;
+    color: #4A90E2 !important;
+    border-radius: 16px !important;
 }
 
 /* 隐藏footer */

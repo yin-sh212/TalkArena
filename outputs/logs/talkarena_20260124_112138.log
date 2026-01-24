@@ -1,0 +1,37 @@
+2026-01-24 11:21:38,748 [INFO] Handlers 初始化模型...
+2026-01-24 11:21:38,748 [INFO] ============================================================
+2026-01-24 11:21:38,748 [INFO] TalkArena Orchestrator 初始化
+2026-01-24 11:21:38,748 [INFO] ============================================================
+2026-01-24 11:21:38,748 [INFO] 加载 LLM 模型...
+2026-01-24 11:21:40,675 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 503 Service Unavailable"
+2026-01-24 11:21:40,675 [INFO] Retrying request to /chat/completions in 0.424557 seconds
+2026-01-24 11:21:42,033 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 11:21:42,038 [INFO] 加载 TTS 模型...
+2026-01-24 11:21:43,001 [INFO] 加载 STT 模型...
+2026-01-24 11:21:43,277 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-24 11:21:43,277 [INFO] Handlers 模型初始化完成
+2026-01-24 11:21:44,893 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-24 11:21:44,930 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-24 11:21:45,435 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-24 11:21:46,969 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"
+2026-01-24 11:22:05,666 [INFO] ============================================================
+2026-01-24 11:22:05,666 [INFO] [SESSION 6f3a75c6] 新对局开始
+2026-01-24 11:22:05,667 [INFO]   场景: 辩论赛
+2026-01-24 11:22:05,667 [INFO]   AI角色: 反方辩手
+2026-01-24 11:22:05,667 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-24 11:22:05,668 [INFO] ============================================================
+2026-01-24 11:22:13,501 [INFO] --------------------------------------------------
+2026-01-24 11:22:13,501 [INFO] [SESSION 6f3a75c6] 第 1 回合
+2026-01-24 11:22:13,502 [INFO] [用户输入] ai会让人失业
+2026-01-24 11:22:13,502 [INFO] [犹豫惩罚] 用户思考 7.8s，气场 -6
+2026-01-24 11:22:13,502 [INFO] [气场变动] 用户 44 vs AI 56
+2026-01-24 11:22:13,503 [INFO] [AI思考] 开始生成回复...
+2026-01-24 11:22:18,700 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 11:22:18,700 [INFO] [AI回复] (5.2s) ...
+2026-01-24 11:22:18,701 [INFO] [AI思考惩罚] 思考 5.2s，AI气场 -4
+2026-01-24 11:22:24,969 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 11:22:24,970 [INFO] [裁判判定] 气场转移: +0
+2026-01-24 11:22:24,970 [INFO] [裁判点评] 势均力敌
+2026-01-24 11:22:24,970 [INFO] [气场结果] 用户 48 -> 48 | AI 52 -> 52
+2026-01-24 11:22:24,974 [WARNING] [TTS] 语音合成失败，跳过
+2026-01-24 11:22:24,974 [INFO] --------------------------------------------------

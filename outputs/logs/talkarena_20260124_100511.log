@@ -1,0 +1,48 @@
+2026-01-24 10:05:11,208 [INFO] Handlers 初始化模型...
+2026-01-24 10:05:11,208 [INFO] ============================================================
+2026-01-24 10:05:11,208 [INFO] TalkArena Orchestrator 初始化
+2026-01-24 10:05:11,209 [INFO] ============================================================
+2026-01-24 10:05:11,209 [INFO] 加载 LLM 模型...
+2026-01-24 10:05:15,066 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:05:15,066 [INFO] Retrying request to /chat/completions in 0.400579 seconds
+2026-01-24 10:05:17,612 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:05:17,612 [INFO] Retrying request to /chat/completions in 0.990355 seconds
+2026-01-24 10:05:20,741 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:05:21,103 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 10:05:21,425 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 10:05:21,890 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:05:21,894 [INFO] 加载 TTS 模型...
+2026-01-24 10:05:22,728 [INFO] 加载 STT 模型...
+2026-01-24 10:05:23,003 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-24 10:05:23,003 [INFO] Handlers 模型初始化完成
+2026-01-24 10:05:24,529 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-24 10:05:24,560 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-24 10:05:25,123 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-24 10:05:31,560 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"
+2026-01-24 10:05:51,218 [INFO] ============================================================
+2026-01-24 10:05:51,218 [INFO] [SESSION 7b55e886] 新对局开始
+2026-01-24 10:05:51,218 [INFO]   场景: 辩论赛
+2026-01-24 10:05:51,218 [INFO]   AI角色: 反方辩手
+2026-01-24 10:05:51,218 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-24 10:05:51,218 [INFO] ============================================================
+2026-01-24 10:06:19,625 [INFO] --------------------------------------------------
+2026-01-24 10:06:19,625 [INFO] [SESSION 7b55e886] 第 1 回合
+2026-01-24 10:06:19,626 [INFO] [用户输入] 你吼那么大声干什么吗
+2026-01-24 10:06:19,626 [INFO] [犹豫惩罚] 用户思考 28.4s，气场 -15
+2026-01-24 10:06:19,626 [INFO] [气场变动] 用户 35 vs AI 65
+2026-01-24 10:06:19,627 [INFO] [AI思考] 开始生成回复...
+2026-01-24 10:06:22,777 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:06:22,777 [INFO] [AI回复] (3.1s) （冷笑一声）看来对方辩友还没有意识到自己的论点是多么不堪一击。那么，就让我来替你省点力气吧。请问对方辩友，你所谓的“核心依据”是什么？是那几个过时的数据吗？还是那些已经被学术界否定的理论？别忘了，你刚...
+2026-01-24 10:06:22,777 [INFO] [AI思考惩罚] 思考 3.1s，AI气场 -2
+2026-01-24 10:06:24,231 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:06:24,232 [INFO] [裁判判定] 气场转移: -20
+2026-01-24 10:06:24,232 [INFO] [裁判点评] 用户的发言显得有些情绪化，而AI则通过冷笑和尖锐的问题成功转移了气场，对用户产生了压迫感，并有效回应了对方的攻击。
+2026-01-24 10:06:24,232 [INFO] [气场结果] 用户 37 -> 17 | AI 63 -> 83
+2026-01-24 10:06:29,527 [INFO] [TTS] 生成语音: outputs\audio\7b55e886\turn_1.wav
+2026-01-24 10:06:29,528 [INFO] --------------------------------------------------
+2026-01-24 10:06:54,677 [INFO] ============================================================
+2026-01-24 10:06:54,678 [INFO] [SESSION 23b9010d] 新对局开始
+2026-01-24 10:06:54,678 [INFO]   场景: 商务谈判
+2026-01-24 10:06:54,678 [INFO]   AI角色: 王总
+2026-01-24 10:06:54,678 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-24 10:06:54,678 [INFO] ============================================================

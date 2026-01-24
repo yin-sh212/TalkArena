@@ -1,0 +1,20 @@
+2026-01-24 10:01:29,158 [INFO] Handlers 初始化模型...
+2026-01-24 10:01:29,158 [INFO] ============================================================
+2026-01-24 10:01:29,158 [INFO] TalkArena Orchestrator 初始化
+2026-01-24 10:01:29,158 [INFO] ============================================================
+2026-01-24 10:01:29,158 [INFO] 加载 LLM 模型...
+2026-01-24 10:01:31,982 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:01:31,986 [INFO] 加载 TTS 模型...
+2026-01-24 10:01:32,796 [INFO] 加载 STT 模型...
+2026-01-24 10:01:33,059 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-24 10:01:33,059 [INFO] Handlers 模型初始化完成
+2026-01-24 10:01:34,543 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-24 10:01:34,577 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-24 10:01:35,206 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-24 10:01:36,510 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"
+2026-01-24 10:02:06,374 [INFO] ============================================================
+2026-01-24 10:02:06,374 [INFO] [SESSION c10fec0f] 新对局开始
+2026-01-24 10:02:06,375 [INFO]   场景: 商务谈判
+2026-01-24 10:02:06,375 [INFO]   AI角色: 王总
+2026-01-24 10:02:06,375 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-24 10:02:06,375 [INFO] ============================================================

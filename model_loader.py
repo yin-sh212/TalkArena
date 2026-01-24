@@ -82,23 +82,68 @@ class LLMLoader:
         self.use_api = False
         print("[LLMLoader] ✓ 本地模型加载成功")
     
+    def get_model_name(self) -> str:
+        """获取当前使用的模型名称"""
+        if self.use_api:
+            return self.model_name.split('/')[-1] if self.model_name else "API"
+        else:
+            return "Qwen2.5-3B (local)"
+    
     def generate(self, text: str, max_new_tokens: int = 2000, temperature: float = 0.7) -> str:
         """生成回复"""
         if self.use_api:
-            return self._generate_api(text, max_new_tokens, temperature)
+            try:
+                return self._generate_api(text, max_new_tokens, temperature)
+            except Exception as e:
+                print(f"[LLMLoader] API调用失败: {e}")
+                print("[LLMLoader] 自动切换到本地模型...")
+                if not self.local_model:
+                    self._load_local_model()
+                self.use_api = False
+                return self._generate_local(text, max_new_tokens, temperature)
         else:
             return self._generate_local(text, max_new_tokens, temperature)
     
     def _generate_api(self, text: str, max_new_tokens: int, temperature: float) -> str:
-        """使用魔搭 API 生成"""
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=[{"role": "user", "content": text}],
-            max_tokens=max_new_tokens,
-            temperature=temperature,
-            top_p=0.9
-        )
-        return response.choices[0].message.content.strip()
+        """使用魔搭 API 生成，带重试"""
+        import time
+        
+        for attempt in range(3):
+            try:
+                start = time.time()
+                response = self.client.chat.completions.create(
+                    model=self.model_name,
+                    messages=[{"role": "user", "content": text}],
+                    max_tokens=max_new_tokens,
+                    temperature=temperature,
+                    top_p=0.9
+                )
+                elapsed = time.time() - start
+                
+                content = response.choices[0].message.content
+                finish_reason = response.choices[0].finish_reason
+                
+                print(f"[LLMLoader] API响应: {elapsed:.1f}s, finish_reason={finish_reason}")
+                
+                if content is None or content.strip() == "":
+                    print(f"[LLMLoader] 警告: API返回空内容 (attempt {attempt+1}/3)")
+                    if attempt < 2:
+                        time.sleep(1)
+                        continue
+                    return ""
+                
+                result = content.strip()
+                print(f"[LLMLoader] API返回: {len(result)}字符")
+                return result
+                
+            except Exception as e:
+                print(f"[LLMLoader] API调用异常 (attempt {attempt+1}/3): {e}")
+                if attempt < 2:
+                    time.sleep(1)
+                    continue
+                raise
+        
+        return ""
     
     def _generate_local(self, text: str, max_new_tokens: int, temperature: float) -> str:
         """使用本地模型生成"""
@@ -137,73 +182,80 @@ class TTSLoader:
         print("[TTSLoader] ✓ Edge-TTS 就绪")
     
     def synthesize(self, text: str, emotion: str = "neutral", voice: str = None) -> bytes:
-        import asyncio
         import io
-        import threading
+        import subprocess
+        import tempfile
+        import os
         from pydub import AudioSegment
         
         resolved_voice = voice or self._emotion_to_voice(emotion)
         print(f"[TTSLoader] 合成语音: {text[:50]}...")
-        print(f"[TTSLoader] 使用声音: {resolved_voice}")
+        print(f"[TTSLoader] 文本长度: {len(text)} 字符")
         
-        result = [None]
-        error = [None]
-        
-        def run_in_thread():
-            async def _synthesize():
-                try:
-                    communicate = self._edge_tts.Communicate(text, resolved_voice)
-                    audio_data = b""
-                    async for chunk in communicate.stream():
-                        if chunk["type"] == "audio":
-                            audio_data += chunk["data"]
-                    return audio_data
-                except Exception as e:
-                    print(f"[TTSLoader] 异常: {type(e).__name__}: {e}")
-                    raise
-            
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                result[0] = loop.run_until_complete(_synthesize())
-            except Exception as e:
-                error[0] = e
-                print(f"[TTSLoader] 线程内异常: {e}")
-            finally:
-                loop.close()
-        
-        thread = threading.Thread(target=run_in_thread)
-        thread.start()
-        thread.join(timeout=30)
-        
-        if error[0]:
-            print(f"[TTSLoader] TTS失败: {error[0]}")
-            return None
-        
-        if not thread.is_alive() and result[0] is None:
-            print("[TTSLoader] 警告: 线程完成但结果为None")
-        
-        mp3_bytes = result[0]
-        
-        if not mp3_bytes or len(mp3_bytes) < 100:
-            print(f"[TTSLoader] 警告: MP3数据为空或过小 ({len(mp3_bytes) if mp3_bytes else 0} bytes)")
-            return None
-        
-        print(f"[TTSLoader] MP3数据大小: {len(mp3_bytes)} bytes")
-        
-        mp3_io = io.BytesIO(mp3_bytes)
-        mp3_io.seek(0)
-        
+        # 使用 subprocess 调用 edge-tts CLI
         try:
-            audio = AudioSegment.from_mp3(mp3_io)
-            wav_io = io.BytesIO()
-            audio.export(wav_io, format="wav")
-            wav_bytes = wav_io.getvalue()
-            print(f"[TTSLoader] ✓ 合成成功，音频大小: {len(wav_bytes)} bytes")
-            return wav_bytes
+            with tempfile.NamedTemporaryFile(suffix='.mp3', delete=False) as tmp:
+                tmp_path = tmp.name
+            
+            print(f"[TTSLoader] 临时文件: {tmp_path}")
+            
+            cmd = ['edge-tts', '--voice', resolved_voice, '--text', text, '--write-media', tmp_path]
+            print(f"[TTSLoader] 执行命令: edge-tts --voice {resolved_voice} --text <{len(text)}字符>")
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            
+            print(f"[TTSLoader] 返回码: {result.returncode}")
+            if result.stdout:
+                print(f"[TTSLoader] stdout: {result.stdout[:200]}")
+            if result.stderr:
+                print(f"[TTSLoader] stderr: {result.stderr[:200]}")
+            
+            if result.returncode != 0:
+                print(f"[TTSLoader] CLI错误: {result.stderr}")
+                return None
+            
+            if not os.path.exists(tmp_path):
+                print("[TTSLoader] 临时文件不存在")
+                return None
+            
+            file_size = os.path.getsize(tmp_path)
+            print(f"[TTSLoader] 文件大小: {file_size} bytes")
+            
+            with open(tmp_path, 'rb') as f:
+                mp3_bytes = f.read()
+            
+            try:
+                os.unlink(tmp_path)
+            except:
+                pass
+            
+            print(f"[TTSLoader] 读取完成: {len(mp3_bytes)} bytes")
+            
+            if len(mp3_bytes) < 1024:
+                print(f"[TTSLoader] 警告: MP3数据无效")
+                return None
+            
+            # 转换为 WAV
+            mp3_io = io.BytesIO(mp3_bytes)
+            try:
+                audio = AudioSegment.from_mp3(mp3_io)
+                wav_io = io.BytesIO()
+                audio.export(wav_io, format="wav")
+                wav_bytes = wav_io.getvalue()
+                print(f"[TTSLoader] ✓ WAV: {len(wav_bytes)} bytes")
+                return wav_bytes
+            except Exception as e:
+                print(f"[TTSLoader] MP3转WAV失败: {e}")
+                return mp3_bytes
+                
+        except subprocess.TimeoutExpired:
+            print("[TTSLoader] 超时")
+            return None
         except Exception as e:
-            print(f"[TTSLoader] MP3转WAV失败: {e}")
-            return mp3_bytes
+            print(f"[TTSLoader] 异常: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
 
     def _emotion_to_voice(self, emotion: str) -> str:
         emotion_voice_map = {

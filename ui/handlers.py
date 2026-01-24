@@ -71,12 +71,27 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
     chat_history = list(chat_history)
     chat_history.append({"role": "user", "content": user_input})
     
+    thinking_msg_added = False
+    think_start = None
+    model_name = ""
+    
     for update in orch.process_turn_streaming(session_id, user_input):
         stage = update["stage"]
         ai_dom = update["ai_dominance"]
         user_dom = update["user_dominance"]
         
-        if stage in ("user_sent", "ai_thinking", "ai_responded"):
+        if stage == "user_sent":
+            yield chat_history, "", ai_dom, user_dom, None
+        
+        elif stage == "ai_thinking":
+            model_name = update.get("model_name", "")
+            think_start = update.get("think_start")
+            if not thinking_msg_added:
+                chat_history.append({"role": "assistant", "content": f"🤔 **正在思考...** (模型: {model_name})"})
+                thinking_msg_added = True
+            yield chat_history, "", ai_dom, user_dom, None
+        
+        elif stage == "ai_responded":
             yield chat_history, "", ai_dom, user_dom, None
         
         elif stage == "complete":
@@ -88,9 +103,17 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
             shift_str = f"+{shift}" if shift > 0 else str(shift)
             ai_name = orch.scenarios[orch.sessions[session_id].scenario_id]['ai_name']
             
-            display_text = f"**{ai_name}**: {ai_text}\n\n---\n_📊 {judgment} (气场{shift_str})_"
+            # 计算思考时间
+            import time
+            think_time = f"{time.time() - think_start:.1f}s" if think_start else ""
             
-            chat_history.append({"role": "assistant", "content": display_text})
+            display_text = f"**{ai_name}**: {ai_text}\n\n---\n_📊 {judgment} (气场{shift_str}) | ⚙️ {model_name} {think_time}_"
+            
+            # 替换思考消息为实际回复
+            if thinking_msg_added and chat_history and chat_history[-1].get("content", "").startswith("🤔"):
+                chat_history[-1] = {"role": "assistant", "content": display_text}
+            else:
+                chat_history.append({"role": "assistant", "content": display_text})
             
             yield chat_history, "", ai_dom, user_dom, audio_path
 

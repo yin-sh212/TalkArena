@@ -1,0 +1,50 @@
+2026-01-24 10:38:09,977 [INFO] Handlers 初始化模型...
+2026-01-24 10:38:09,977 [INFO] ============================================================
+2026-01-24 10:38:09,977 [INFO] TalkArena Orchestrator 初始化
+2026-01-24 10:38:09,978 [INFO] ============================================================
+2026-01-24 10:38:09,978 [INFO] 加载 LLM 模型...
+2026-01-24 10:38:14,096 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:38:14,096 [INFO] Retrying request to /chat/completions in 0.457343 seconds
+2026-01-24 10:38:18,686 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:38:18,686 [INFO] Retrying request to /chat/completions in 0.775432 seconds
+2026-01-24 10:38:21,620 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:38:21,874 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 10:38:22,284 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 10:38:22,858 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:38:22,863 [INFO] 加载 TTS 模型...
+2026-01-24 10:38:23,969 [INFO] 加载 STT 模型...
+2026-01-24 10:38:24,274 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-24 10:38:24,274 [INFO] Handlers 模型初始化完成
+2026-01-24 10:38:26,552 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-24 10:38:26,591 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-24 10:38:27,159 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-24 10:38:28,847 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"
+2026-01-24 10:39:11,408 [INFO] ============================================================
+2026-01-24 10:39:11,409 [INFO] [SESSION 3a4fed0e] 新对局开始
+2026-01-24 10:39:11,409 [INFO]   场景: 辩论赛
+2026-01-24 10:39:11,410 [INFO]   AI角色: 反方辩手
+2026-01-24 10:39:11,411 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-24 10:39:11,411 [INFO] ============================================================
+2026-01-24 10:39:19,236 [INFO] --------------------------------------------------
+2026-01-24 10:39:19,236 [INFO] [SESSION 3a4fed0e] 第 1 回合
+2026-01-24 10:39:19,236 [INFO] [用户输入] AI会让人失业
+2026-01-24 10:39:19,236 [INFO] [犹豫惩罚] 用户思考 7.8s，气场 -6
+2026-01-24 10:39:19,237 [INFO] [气场变动] 用户 44 vs AI 56
+2026-01-24 10:39:19,238 [INFO] [AI思考] 开始生成回复...
+2026-01-24 10:39:22,304 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:39:22,305 [INFO] [AI回复] (3.1s) （冷笑一声）请问对方辩友，你所谓的“AI让人失业”是基于哪个时间维度？短期还是长期？如果你们说的是短期，那是因为经济转型期总会伴随阵痛，但如果从长期来看，AI的发展实际上创造了更多的就业机会，你怎么解...
+2026-01-24 10:39:22,305 [INFO] [AI思考惩罚] 思考 3.1s，AI气场 -2
+2026-01-24 10:39:23,663 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:39:23,664 [INFO] [裁判判定] 气场转移: -15
+2026-01-24 10:39:23,664 [INFO] [裁判点评] 用户的发言较为直接，但缺乏对AI创造就业机会的具体论据支持，而反方辩手通过冷笑和提问的方式削弱了用户的气势，并有效回应了对方的论点。
+2026-01-24 10:39:23,664 [INFO] [气场结果] 用户 46 -> 31 | AI 54 -> 69
+2026-01-24 10:39:28,535 [INFO] [TTS] 生成语音: outputs\audio\3a4fed0e\turn_1.wav
+2026-01-24 10:39:28,535 [INFO] --------------------------------------------------
+2026-01-24 10:39:41,613 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:39:41,614 [INFO] ============================================================
+2026-01-24 10:39:41,614 [INFO] [SESSION 3a4fed0e] 对决结束
+2026-01-24 10:39:41,615 [INFO]   结果: 💢 AI 胜出
+2026-01-24 10:39:41,615 [INFO]   最终气场: 用户 31 vs AI 69
+2026-01-24 10:39:41,615 [INFO]   总回合数: 1
+2026-01-24 10:39:41,615 [INFO] ============================================================
+2026-01-24 10:39:41,624 [INFO] [保存] 对决记录: outputs\sessions\3a4fed0e_summary.md

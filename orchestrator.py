@@ -286,12 +286,15 @@ class Orchestrator:
         
         # === AI 思考阶段 ===
         think_start = time.time()
-        logger.info(f"[AI思考] 开始生成回复...")
+        model_name = self.llm.get_model_name()
+        logger.info(f"[AI思考] 开始生成回复... (模型: {model_name})")
         
         yield {
             "stage": "ai_thinking",
             "user_dominance": session.user_dominance,
             "ai_dominance": session.ai_dominance,
+            "model_name": model_name,
+            "think_start": think_start,
             "log": "AI 正在思考..."
         }
         
@@ -317,8 +320,15 @@ class Orchestrator:
 
 {scenario['ai_name']}:"""
         
+        logger.debug(f"[AI思考] Prompt长度: {len(prompt)}字符")
+        
         ai_text = self.llm.generate(prompt, max_new_tokens=400)
         ai_text = self._clean_response(ai_text, scenario['ai_name'])
+        
+        # 如果 AI 返回空，使用 fallback 回复
+        if not ai_text:
+            logger.warning("[AI思考] LLM返回空，使用fallback回复")
+            ai_text = "（沉默片刻）你说得很有意思，但我不同意。"
         
         think_time = time.time() - think_start
         logger.info(f"[AI回复] ({think_time:.1f}s) {ai_text[:100]}...")
@@ -353,13 +363,16 @@ class Orchestrator:
         
         audio_path = None
         if self.tts:
-            clean_text = re.sub(r'[（(][^）)]*[）)]', '', ai_text)
-            audio_bytes = self.tts.synthesize(clean_text, emotion=emotion)
-            if audio_bytes:
-                audio_path = self._save_audio(session_id, audio_bytes)
-                logger.info(f"[TTS] 生成语音: {audio_path}")
+            clean_text = re.sub(r'[（(][^）)]*[）)]', '', ai_text).strip()
+            if clean_text:
+                audio_bytes = self.tts.synthesize(clean_text, emotion=emotion)
+                if audio_bytes:
+                    audio_path = self._save_audio(session_id, audio_bytes)
+                    logger.info(f"[TTS] 生成语音: {audio_path}")
+                else:
+                    logger.warning("[TTS] 语音合成失败，跳过")
             else:
-                logger.warning("[TTS] 语音合成失败，跳过")
+                logger.warning(f"[TTS] 清理后文本为空，跳过 (ai_text={ai_text[:50] if ai_text else 'None'}...)")
         
         session.chat_history.append((session.ai_name, ai_text))
         session.last_activity = time.time()
@@ -378,10 +391,14 @@ class Orchestrator:
         }
     
     def _clean_response(self, text: str, ai_name: str) -> str:
+        if not text:
+            logger.warning(f"[_clean_response] 输入文本为空")
+            return ""
         text = text.strip()
         for prefix in [f"{ai_name}:", f"{ai_name}：", "你:", "你："]:
             if text.startswith(prefix):
                 text = text[len(prefix):].strip()
+        logger.debug(f"[_clean_response] 清理后: {len(text)}字符")
         return text
     
     def _judge_dominance_zero_sum(self, session: Session, user_text: str, ai_text: str, scenario: Dict) -> Tuple[int, str]:

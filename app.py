@@ -78,7 +78,7 @@ def create_ui():
                 # 聊天框
                 chatbot = gr.Chatbot(
                     show_label=False,
-                    height=300,
+                    height=250,
                     elem_classes="chat-box-container"
                 )
                 
@@ -93,7 +93,7 @@ def create_ui():
                         container=False,
                         scale=10
                     )
-                    btn_send = gr.Button("⬆", scale=0, min_width=36)
+                    btn_send = gr.Button("发送", scale=0, min_width=60, elem_classes="send-btn")
                 
                 audio_player = gr.Audio(visible=False, autoplay=True)
 
@@ -130,19 +130,31 @@ def create_ui():
 
         def on_end(sess, history):
             """结束对决，显示总结"""
+            print(f"[DEBUG] on_end called, sess={sess}")
+            
             if not sess:
-                return gr.update(visible=False), gr.update(visible=True), gr.update(visible=False)
+                print("[DEBUG] No session")
+                return gr.update(value="请先开始对决", visible=True), gr.update(visible=False), gr.update(visible=True)
             
             from ui.handlers import get_orchestrator
             orch = get_orchestrator()
             
             if sess not in orch.sessions:
+                print(f"[DEBUG] Session {sess} not found")
                 return gr.update(value="对决已结束", visible=True), gr.update(visible=False), gr.update(visible=True)
             
+            # 立即显示"正在生成总结"
+            yield (
+                gr.update(value="⏳ **正在生成对决总结...**\n\n_请稍候，正在分析对话记录..._", visible=True),
+                gr.update(visible=False),
+                gr.update(visible=False)
+            )
+            
+            print(f"[DEBUG] Generating summary for {sess}")
             summary, _ = orch.end_session_with_summary(sess)
             summary_md = f"### 🏆 对决总结\n\n{summary}"
             
-            return (
+            yield (
                 gr.update(value=summary_md, visible=True),
                 gr.update(visible=False),
                 gr.update(visible=True)

@@ -1,0 +1,57 @@
+2026-01-24 10:21:36,888 [INFO] Handlers 初始化模型...
+2026-01-24 10:21:36,889 [INFO] ============================================================
+2026-01-24 10:21:36,889 [INFO] TalkArena Orchestrator 初始化
+2026-01-24 10:21:36,889 [INFO] ============================================================
+2026-01-24 10:21:36,889 [INFO] 加载 LLM 模型...
+2026-01-24 10:21:41,381 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:21:41,381 [INFO] Retrying request to /chat/completions in 0.483846 seconds
+2026-01-24 10:21:46,032 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:21:46,032 [INFO] Retrying request to /chat/completions in 0.839567 seconds
+2026-01-24 10:21:51,004 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:21:51,364 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 10:21:51,586 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 10:21:52,105 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:21:52,109 [INFO] 加载 TTS 模型...
+2026-01-24 10:21:53,055 [INFO] 加载 STT 模型...
+2026-01-24 10:21:53,373 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-24 10:21:53,374 [INFO] Handlers 模型初始化完成
+2026-01-24 10:21:55,163 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-24 10:21:55,205 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-24 10:21:55,671 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-24 10:21:57,224 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"
+2026-01-24 10:23:00,936 [INFO] ============================================================
+2026-01-24 10:23:00,936 [INFO] [SESSION b36331ac] 新对局开始
+2026-01-24 10:23:00,937 [INFO]   场景: 辩论赛
+2026-01-24 10:23:00,938 [INFO]   AI角色: 反方辩手
+2026-01-24 10:23:00,938 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-24 10:23:00,939 [INFO] ============================================================
+2026-01-24 10:23:46,748 [INFO] --------------------------------------------------
+2026-01-24 10:23:46,750 [INFO] [SESSION b36331ac] 第 1 回合
+2026-01-24 10:23:46,750 [INFO] [用户输入] 我认为，科学技术的进步对人类生活水平的进步并不是完全正面的
+2026-01-24 10:23:46,750 [INFO] [犹豫惩罚] 用户思考 45.8s，气场 -15
+2026-01-24 10:23:46,750 [INFO] [气场变动] 用户 35 vs AI 65
+2026-01-24 10:23:46,751 [INFO] [AI思考] 开始生成回复...
+2026-01-24 10:23:50,038 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:23:50,039 [INFO] [AI回复] (3.3s) （冷笑一声）请问对方辩友，你们的这个论断又是基于什么？难道是你们闭门造车、拒绝科技发展的结果？那你们的生活水平是提升了还是下降了？我看你是搬起石头砸自己的脚吧！科学和技术的进步带来了无数的便利和奇迹，...
+2026-01-24 10:23:50,039 [INFO] [AI思考惩罚] 思考 3.3s，AI气场 -2
+2026-01-24 10:23:51,234 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:23:51,235 [INFO] [裁判判定] 气场转移: -15
+2026-01-24 10:23:51,235 [INFO] [裁判点评] 用户在面对AI的强烈反击时，语气显得较为平淡，未能有效回应对方的质疑，导致气场所处的位置有所下降。
+2026-01-24 10:23:51,235 [INFO] [气场结果] 用户 37 -> 22 | AI 63 -> 78
+2026-01-24 10:23:55,048 [INFO] [TTS] 生成语音: outputs\audio\b36331ac\turn_1.wav
+2026-01-24 10:23:55,048 [INFO] --------------------------------------------------
+2026-01-24 10:24:10,797 [INFO] --------------------------------------------------
+2026-01-24 10:24:10,797 [INFO] [SESSION b36331ac] 第 2 回合
+2026-01-24 10:24:10,798 [INFO] [用户输入] AI的出现让很多人失去了工作啊
+2026-01-24 10:24:10,798 [INFO] [犹豫惩罚] 用户思考 15.8s，气场 -15
+2026-01-24 10:24:10,798 [INFO] [气场变动] 用户 7 vs AI 93
+2026-01-24 10:24:10,799 [INFO] [AI思考] 开始生成回复...
+2026-01-24 10:24:14,117 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:24:14,118 [INFO] [AI回复] (3.3s) （冷笑一声，语气尖锐）请问对方辩友，你们认为失去工作的都是技术含量高的岗位吗？恰恰相反，AI和自动化技术更倾向于替代那些重复性劳动和技能要求较低的工作。根据国际劳工组织的数据，2020年全球因技术进步...
+2026-01-24 10:24:14,118 [INFO] [AI思考惩罚] 思考 3.3s，AI气场 -2
+2026-01-24 10:24:15,561 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:24:15,562 [INFO] [裁判判定] 气场转移: -15
+2026-01-24 10:24:15,562 [INFO] [裁判点评] 用户的发言较为直接，但缺乏具体数据支持其观点，反方通过冷笑和尖锐的语气回应，同时提供了有力的数据支持和反驳，成功转移了辩论的气场。
+2026-01-24 10:24:15,562 [INFO] [气场结果] 用户 9 -> 5 | AI 91 -> 95
+2026-01-24 10:24:19,681 [INFO] [TTS] 生成语音: outputs\audio\b36331ac\turn_2.wav
+2026-01-24 10:24:19,682 [INFO] --------------------------------------------------

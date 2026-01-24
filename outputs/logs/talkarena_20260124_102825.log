@@ -1,0 +1,42 @@
+2026-01-24 10:28:25,076 [INFO] Handlers 初始化模型...
+2026-01-24 10:28:25,076 [INFO] ============================================================
+2026-01-24 10:28:25,076 [INFO] TalkArena Orchestrator 初始化
+2026-01-24 10:28:25,076 [INFO] ============================================================
+2026-01-24 10:28:25,077 [INFO] 加载 LLM 模型...
+2026-01-24 10:28:29,253 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:28:29,253 [INFO] Retrying request to /chat/completions in 0.395055 seconds
+2026-01-24 10:28:31,801 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:28:31,801 [INFO] Retrying request to /chat/completions in 0.998200 seconds
+2026-01-24 10:28:36,931 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2026-01-24 10:28:37,525 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 10:28:37,807 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 10:28:38,962 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:28:38,966 [INFO] 加载 TTS 模型...
+2026-01-24 10:28:39,935 [INFO] 加载 STT 模型...
+2026-01-24 10:28:40,235 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-24 10:28:40,236 [INFO] Handlers 模型初始化完成
+2026-01-24 10:28:42,052 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-24 10:28:42,074 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-24 10:28:42,625 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-24 10:28:44,097 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"
+2026-01-24 10:29:23,213 [INFO] ============================================================
+2026-01-24 10:29:23,213 [INFO] [SESSION d28a9767] 新对局开始
+2026-01-24 10:29:23,213 [INFO]   场景: 辩论赛
+2026-01-24 10:29:23,213 [INFO]   AI角色: 反方辩手
+2026-01-24 10:29:23,214 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-24 10:29:23,214 [INFO] ============================================================
+2026-01-24 10:29:40,828 [INFO] --------------------------------------------------
+2026-01-24 10:29:40,829 [INFO] [SESSION d28a9767] 第 1 回合
+2026-01-24 10:29:40,829 [INFO] [用户输入] AI会让人失业
+2026-01-24 10:29:40,829 [INFO] [犹豫惩罚] 用户思考 17.6s，气场 -15
+2026-01-24 10:29:40,829 [INFO] [气场变动] 用户 35 vs AI 65
+2026-01-24 10:29:40,831 [INFO] [AI思考] 开始生成回复...
+2026-01-24 10:29:44,734 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:29:44,735 [INFO] [AI回复] (3.9s) （目光冷峻，语气坚定）AI会让人失业？请问对方辩友，你们是根据哪项调查数据得出这个结论的？是全球范围内的吗？还是仅仅局限于某个行业？还是说，你们连数据都没有，只是凭空臆断？别告诉我你们的依据是去年某个...
+2026-01-24 10:29:44,735 [INFO] [AI思考惩罚] 思考 3.9s，AI气场 -2
+2026-01-24 10:29:45,964 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 10:29:45,966 [INFO] [裁判判定] 气场转移: -20
+2026-01-24 10:29:45,966 [INFO] [裁判点评] 反方辩手通过质疑用户的数据来源并强调AI也能创造就业机会，成功转移了气场，给用户施加了较大的压力。
+2026-01-24 10:29:45,966 [INFO] [气场结果] 用户 37 -> 17 | AI 63 -> 83
+2026-01-24 10:29:50,965 [INFO] [TTS] 生成语音: outputs\audio\d28a9767\turn_1.wav
+2026-01-24 10:29:50,966 [INFO] --------------------------------------------------
