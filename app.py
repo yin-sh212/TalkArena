@@ -38,7 +38,7 @@ def create_ui():
 
         # ========== Page 1: 场景选择页 ==========
         with gr.Row(visible=True, elem_classes="scene-select-page") as page_select:
-            with gr.Column(scale=0, min_width=280):
+            with gr.Column(scale=6, min_width=400):
                 gr.HTML('<div class="brand-title">TalkArena</div>')
                 gr.HTML('<div class="brand-subtitle">选择挑战场景</div>')
 
@@ -53,65 +53,66 @@ def create_ui():
 
                 gr.HTML('<div class="footer-action">自定义场景 ?</div>')
 
-            with gr.Column(scale=1):
+            with gr.Column(scale=4, min_width=300):
                 gr.Markdown("### 登录")
                 name_input = gr.Textbox(label="姓名", placeholder="请输入姓名")
                 email_input = gr.Textbox(label="邮箱", placeholder="可选")
                 login_btn = gr.Button("保存", variant="primary")
 
         # ========== Page 2: 对话页 ==========
-        with gr.Column(visible=False, elem_classes="chat-page") as page_chat:
-            # 视觉舞台区 (集成气场条)
-            visual_stage = gr.HTML("", elem_id="visual-stage")
-            
-            with gr.Row():
-                # 侧边控制栏 (缩小)
-                with gr.Column(scale=1, min_width=120, elem_classes="side-controls"):
-                    rescue_btn = gr.Button("🆘 救场", variant="secondary", elem_classes="summon-btn-styled")
-                    end_btn = gr.Button("🏁 结束对决", elem_classes="end-btn")
-                    back_btn = gr.Button("↩ 返回场景选择", elem_classes="back-btn", visible=False)
-                    status_display = gr.Markdown("", elem_id="status-display")
-                    
-                    # 侧边气场条 (新位置)
-                    aura_sidebar = gr.HTML(render_aura_sidebar(50, 50))
-
-                # 主对话区 (占满)
-                with gr.Column(scale=9, elem_classes="main-chat-col"):
-                    # 判定反馈框 (顶部，可隐藏)
-                    critique_display = gr.HTML(render_critique_box("正在分析局势..."), visible=False)
-                    
-                    # 聊天记录区（中间，可滚动）
-                    chatbot = gr.Chatbot(
-                        show_label=False,
-                        elem_classes="chat-box-container",
-                        avatar_images=(None, "https://api.dicebear.com/7.x/bottts/svg?seed=TalkArena"),
-                        height=400
-                    )
-                            
-                    # 总结区域（初始隐藏，结束时显示）
-                    summary_display = gr.Markdown(visible=False, elem_classes="summary-box")
-                    
-                    # 语音输入浮动层（隐藏状态）
-                    with gr.Column(visible=False, elem_classes="mic-container-floating") as mic_box:
-                        mic = gr.Audio(
-                            sources=["microphone", "upload"],
-                            type="filepath",
-                            label="🎙️ 语音输入",
-                            container=False
-                        )
-                            
-                    # 输入区（固定底部）
-                    with gr.Row(elem_classes="input-row"):
-                        mic_toggle = gr.Button("🎙️", scale=0, min_width=40, elem_classes="mic-toggle-btn")
-                        txt = gr.Textbox(
-                            show_label=False,
-                            placeholder="输入消息...",
-                            container=False,
-                            scale=10
-                        )
-                        btn_send = gr.Button("发送", scale=0, min_width=60, elem_classes="send-btn")
+        with gr.Row(visible=False, elem_classes="chat-page") as page_chat:
+            with gr.Column(elem_classes="chat-page-inner"):
+                # 视觉舞台区 (集成气场条)
+                visual_stage = gr.HTML("", elem_id="visual-stage")
+                
+                with gr.Row():
+                    # 侧边控制栏 (缩小)
+                    with gr.Column(scale=1, min_width=120, elem_classes="side-controls"):
+                        rescue_btn = gr.Button("🆘 救场", variant="secondary", elem_classes="summon-btn-styled")
+                        end_btn = gr.Button("🏁 结束对决", elem_classes="end-btn")
+                        back_btn = gr.Button("↩ 返回场景选择", elem_classes="back-btn", visible=False)
+                        status_display = gr.Markdown("", elem_id="status-display")
                         
-                audio_player = gr.Audio(visible=False, autoplay=True)
+                        # 侧边气场条 (新位置)
+                        aura_sidebar = gr.HTML(render_aura_sidebar(50, 50))
+
+                    # 主对话区 (占满)
+                    with gr.Column(scale=9, elem_classes="main-chat-col"):
+                        # 判定反馈框 (顶部，可隐藏)
+                        critique_display = gr.HTML(render_critique_box("正在分析局势..."), visible=False)
+                        
+                        # 聊天记录区（中间，可滚动）
+                        chatbot = gr.Chatbot(
+                            show_label=False,
+                            elem_classes="chat-box-container",
+                            avatar_images=(None, "https://api.dicebear.com/7.x/bottts/svg?seed=TalkArena"),
+                            height=400
+                        )
+                                
+                        # 总结区域（初始隐藏，结束时显示）
+                        summary_display = gr.Markdown(visible=False, elem_classes="summary-box")
+                        
+                        # 语音输入浮动层（隐藏状态）
+                        with gr.Column(visible=False, elem_classes="mic-container-floating") as mic_box:
+                            mic = gr.Audio(
+                                sources=["microphone", "upload"],
+                                type="filepath",
+                                label="🎙️ 语音输入",
+                                container=False
+                            )
+                                
+                        # 输入区（固定底部）
+                        with gr.Row(elem_classes="input-row"):
+                            mic_toggle = gr.Button("🎙️", scale=0, min_width=40, elem_classes="mic-toggle-btn")
+                            txt = gr.Textbox(
+                                show_label=False,
+                                placeholder="输入消息...",
+                                container=False,
+                                scale=10
+                            )
+                            btn_send = gr.Button("发送", scale=0, min_width=60, elem_classes="send-btn")
+                            
+                    audio_player = gr.Audio(visible=False, autoplay=True)
         
         # ========== 事件处理 ==========
         def on_login(name, email):

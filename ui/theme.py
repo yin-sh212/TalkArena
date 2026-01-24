@@ -9,6 +9,8 @@ CUSTOM_CSS = """
     padding: 0 !important;
     margin: 0 !important;
     min-height: 100vh !important;
+    height: 100vh !important;
+    overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
 }
@@ -17,9 +19,17 @@ CUSTOM_CSS = """
 .scene-select-page {
     flex: 1 !important;
     min-height: 100vh !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
     background: #E6F0FF !important;
     display: flex !important;
     flex-direction: row !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
 }
 
 /* 左侧场景选择区 - 60% */
@@ -62,6 +72,7 @@ CUSTOM_CSS = """
 /* Page 2: 对话页 */
 .chat-page {
     flex: 1 !important;
+    min-height: 100vh !important;
     height: 100vh !important;
     max-height: 100vh !important;
     padding: 0 !important;
@@ -70,6 +81,18 @@ CUSTOM_CSS = """
     display: flex !important;
     flex-direction: column !important;
     overflow: hidden !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+}
+
+.chat-page-inner {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 /* 舞台区 - 固定高度 */
