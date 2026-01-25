@@ -3,89 +3,85 @@ TalkArena 主题样式 - 简化版
 """
 
 CUSTOM_CSS = """
-/* 全局根容器适配 */
-#app, .gradio-app, .gradio-container {
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    min-height: 100vh !important;
+/* Gradio 6.2 适配 - 完全重置 */
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#root, #app, .gradio-app {
+    width: 100% !important;
     height: 100vh !important;
     overflow: hidden !important;
+    position: relative !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.gradio-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+}
+
+/* 所有页面容器默认隐藏 */
+.scene-select-page,
+.config-page,
+.chat-page,
+.report-page {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    display: none !important;
+    z-index: 1 !important;
+}
+
+/* 只显示 visible的页面 */
+.scene-select-page:not([style*="display: none"]),
+.config-page:not([style*="display: none"]),
+.chat-page:not([style*="display: none"]),
+.report-page:not([style*="display: none"]) {
     display: flex !important;
-    flex-direction: column !important;
 }
 
 /* Page 1: 场景选择页 */
 .scene-select-page {
-    flex: 1 !important;
-    min-height: 100vh !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
-    background: #E6F0FF !important;
-    display: flex !important;
-    flex-direction: row !important;
-    overflow: hidden !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-}
-
-/* 左侧场景选择区 - 60% */
-.scene-select-page .column:first-child,
-.scene-select-page [data-testid="column"]:first-child,
-.scene-select-page > div:first-child {
-    width: 60% !important;
-    min-width: 60% !important;
-    max-width: 60% !important;
-    flex: 0 0 60% !important;
-    background: #E6F0FF !important;
-    padding: 30px 40px !important;
-    display: flex !important;
     flex-direction: column !important;
-}
-
-/* 右侧登录区 - 40% */
-.scene-select-page .column:last-child,
-.scene-select-page [data-testid="column"]:last-child,
-.scene-select-page > div:last-child {
-    width: 40% !important;
-    min-width: 40% !important;
-    max-width: 40% !important;
-    flex: 0 0 40% !important;
-    background: white !important;
-    padding: 40px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
+    background: #E6F0FF !important;
+    overflow-y: auto !important;
+    justify-content: flex-start !important;
     align-items: center !important;
-    border-left: 1px solid #E2E8F0 !important;
+    padding: 60px 40px !important;
 }
 
-/* 登录表单容器 */
-.scene-select-page > div:last-child > div {
+.scenario-grid {
     width: 100% !important;
-    max-width: 320px !important;
+    max-width: 1200px !important;
+    margin: 20px 0 !important;
+    gap: 20px !important;
 }
 
-/* Page 2: 对话页 */
+
+
+/* Page 3: 对话页 */
 .chat-page {
-    flex: 1 !important;
-    min-height: 100vh !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: #F8FAFC !important;
-    display: flex !important;
     flex-direction: column !important;
+    background: #F8FAFC !important;
     overflow: hidden !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
 }
 
 .chat-page-inner {
@@ -93,6 +89,7 @@ CUSTOM_CSS = """
     height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
+    overflow: hidden !important;
 }
 
 /* 舞台区 - 固定高度 */
@@ -103,17 +100,17 @@ CUSTOM_CSS = """
     background: white !important;
     border-bottom: 1px solid #E2E8F0 !important;
     padding: 0 !important;
-    z-index: 100 !important;
+    overflow: hidden !important;
 }
 
 /* 中间主内容行 */
 .chat-page > .row,
-.chat-page > [data-testid="row"] {
+.chat-page > [data-testid="row"],
+.chat-page-inner > .row,
+.chat-page-inner > [data-testid="row"] {
     flex: 1 !important;
-    min-height: 0 !important;
     display: flex !important;
-    gap: 0 !important;
-    margin: 0 !important;
+    height: 100% !important;
     overflow: hidden !important;
 }
 
@@ -159,11 +156,10 @@ CUSTOM_CSS = """
     overflow: hidden !important;
 }
 
-/* 聊天框容器 - 固定高度 + 滚动 */
+/* 聊天框容器 - 自适应高度 */
 .chat-box-container {
-    flex: 1 1 auto !important;
-    min-height: 200px !important;
-    max-height: calc(100vh - 350px) !important;
+    flex: 1 !important;
+    min-height: 0 !important;
     background: #FAFAFA !important;
     border: 1px solid #E2E8F0 !important;
     border-radius: 12px !important;
@@ -196,7 +192,8 @@ CUSTOM_CSS = """
     padding: 0 20px !important;
     display: flex !important;
     align-items: center !important;
-    margin-top: 10px !important;
+    margin-top: 20px !important;
+    margin-bottom: 10px !important;
     box-shadow: 0 4px 15px rgba(100, 149, 237, 0.4) !important;
 }
 
@@ -256,12 +253,17 @@ CUSTOM_CSS = """
     box-shadow: 0 4px 10px rgba(74, 144, 226, 0.1) !important;
     text-align: left !important;
     white-space: pre-wrap !important;
-    min-height: 70px !important;
+    min-height: 120px !important;
+    width: 100% !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer !important;
 }
 
 .scenario-card:hover {
+    transform: translateY(-4px) !important;
     background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%) !important;
     border-color: #4A90E2 !important;
+    box-shadow: 0 8px 24px rgba(74, 144, 226, 0.2) !important;
 }
 
 .footer-action {
@@ -369,8 +371,8 @@ CUSTOM_CSS = """
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    height: 140px;
-    border-radius: 12px;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -522,6 +524,234 @@ CUSTOM_CSS = """
 /* 删除旧的浮动计分板样式引用 */
 .score-board-floating {
     display: none !important;
+}
+
+/* Page 2: 配置页 */
+.config-page {
+    flex-direction: column !important;
+    background: linear-gradient(135deg, #FFF9F0 0%, #FFE8CC 100%) !important;
+    padding: 40px 60px !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Page 4: 复盘报告页 */
+.report-page {
+    flex-direction: column !important;
+    background: #2c313c !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+.report-buttons {
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 30px !important;
+    display: flex !important;
+    gap: 12px !important;
+    z-index: 1000 !important;
+}
+
+.btn-dark {
+    background: #1a1a1a !important;
+    color: white !important;
+    padding: 14px 24px !important;
+    border-radius: 12px !important;
+    border: none !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+}
+
+.btn-dark:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3) !important;
+    filter: brightness(1.1) !important;
+}
+
+.btn-light {
+    background: white !important;
+    color: #333 !important;
+    padding: 14px 24px !important;
+    border-radius: 12px !important;
+    border: 1px solid #ddd !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+}
+
+.btn-light:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.btn-purple {
+    background: #8e7cc3 !important;
+    color: white !important;
+    padding: 14px 24px !important;
+    border-radius: 12px !important;
+    border: none !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+}
+
+.btn-purple:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 10px 20px rgba(142, 124, 195, 0.4) !important;
+    filter: brightness(1.1) !important;
+}
+
+.config-page-title {
+    font-size: 36px;
+    font-weight: 900;
+    color: #D48806;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.config-page-subtitle {
+    font-size: 18px;
+    color: #8C6D3D;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin: 30px 0 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ai-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: normal;
+}
+
+.scenario-cards-row {
+    display: flex !important;
+    gap: 15px !important;
+    margin-bottom: 20px !important;
+}
+
+.scene-card {
+    flex: 1 !important;
+    padding: 20px !important;
+    background: white !important;
+    border: 2px solid #E5E7EB !important;
+    border-radius: 12px !important;
+    transition: all 0.3s !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+.scene-card:hover {
+    border-color: #F5A623 !important;
+    box-shadow: 0 4px 12px rgba(245, 166, 35, 0.2) !important;
+    transform: translateY(-2px) !important;
+}
+
+.roster-container {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.roster-card {
+    flex: 1;
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+}
+
+.roster-card:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    transform: translateY(-4px);
+}
+
+.roster-avatar {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.roster-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1a237e;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.roster-role {
+    font-size: 14px;
+    color: #5B6BF9;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.roster-personality {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.secondary-btn {
+    background: white !important;
+    border: 2px solid #E5E7EB !important;
+    color: #333 !important;
+    border-radius: 8px !important;
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    margin: 10px 5px !important;
+}
+
+.secondary-btn:hover {
+    border-color: #F5A623 !important;
+    background: #FFF9F0 !important;
+}
+
+.start-game-btn {
+    width: 100% !important;
+    height: 60px !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    background: linear-gradient(135deg, #F5A623 0%, #D48806 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    margin-top: 30px !important;
+    box-shadow: 0 6px 20px rgba(245, 166, 35, 0.4) !important;
+}
+
+.start-game-btn:hover {
+    box-shadow: 0 8px 25px rgba(245, 166, 35, 0.5) !important;
+    transform: translateY(-2px) !important;
+}
+
+.back-link-btn {
+    background: transparent !important;
+    color: #8C6D3D !important;
+    border: none !important;
+    margin-top: 15px !important;
+    font-size: 14px !important;
+}
+
+.back-link-btn:hover {
+    color: #D48806 !important;
+    text-decoration: underline !important;
 }
 
 .critique-box {

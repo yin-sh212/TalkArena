@@ -1,0 +1,21 @@
+2026-01-25 11:03:58,668 [INFO] Handlers 初始化模型...
+2026-01-25 11:03:58,668 [INFO] ============================================================
+2026-01-25 11:03:58,668 [INFO] TalkArena Orchestrator 初始化
+2026-01-25 11:03:58,668 [INFO] ============================================================
+2026-01-25 11:03:58,669 [INFO] 加载 LLM 模型...
+2026-01-25 11:04:00,566 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-25 11:04:00,567 [INFO] Retrying request to /chat/completions in 0.400160 seconds
+2026-01-25 11:04:01,139 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-25 11:04:01,139 [INFO] Retrying request to /chat/completions in 0.784305 seconds
+2026-01-25 11:04:02,612 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-25 11:04:02,960 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-25 11:04:03,453 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-25 11:04:04,095 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-25 11:04:04,096 [INFO] 加载 TTS 模型...
+2026-01-25 11:04:04,941 [INFO] 加载 STT 模型...
+2026-01-25 11:04:05,203 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-25 11:04:05,203 [INFO] Handlers 模型初始化完成
+2026-01-25 11:04:06,775 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-25 11:04:06,797 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-25 11:04:07,513 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-25 11:04:08,862 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"

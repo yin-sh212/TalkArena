@@ -19,7 +19,16 @@ def get_orchestrator() -> Orchestrator:
 
 def get_scenarios() -> List[Tuple[str, str]]:
     orch = get_orchestrator()
-    return [(scenario.get('name', sid), sid) for sid, scenario in orch.scenarios.items()]
+    # 山东饭局放第一位
+    scenarios_list = []
+    if 'shandong_dinner' in orch.scenarios:
+        scenarios_list.append((orch.scenarios['shandong_dinner'].get('name', 'shandong_dinner'), 'shandong_dinner'))
+    
+    for sid, scenario in orch.scenarios.items():
+        if sid != 'shandong_dinner':
+            scenarios_list.append((scenario.get('name', sid), sid))
+    
+    return scenarios_list
 
 def start_session(scenario_id: str):
     if not scenario_id:
@@ -174,80 +183,19 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
             
             yield chat_history, "", ai_dom, user_dom, audio_path
 
-def handle_rescue(session_id: str, chat_history: List) -> Generator:
-    """处理救场请求 - 救场大师以独立身份介入"""
+def handle_rescue(session_id: str, chat_history: List, txt_input: str) -> Tuple:
+    """处理救场请求 - 生成高情商回复供用户参考"""
     if not session_id:
-        yield (chat_history, "❌ 请先开始对决", 50, 50, None)
-        return
+        return (chat_history, "❌ 请先开始对决", 50, 50, None, "")
     
     orch = get_orchestrator()
     session = orch.sessions[session_id]
     
-    chat_history = list(chat_history)
-    chat_history.append({
-        "role": "assistant", 
-        "content": "🆘 **救场大师正在分析局势...**"
-    })
-    yield (chat_history, "⏳ 救场中...", session.ai_dominance, session.user_dominance, None)
-    
+    # 调用AI生成高情商回复建议
     suggestion = orch.get_rescue_suggestion(session_id)
     
-    chat_history.pop()
-    
-    chat_history.append({
-        "role": "assistant", 
-        "content": suggestion,
-        "metadata": {"title": "🦸 救场大师"}
-    })
-    
-    orch.sessions[session_id].chat_history.append(("救场大师", suggestion))
-    
-    yield (chat_history, "✓ 救场大师已发言", session.ai_dominance, session.user_dominance, None)
-    
-    for update in orch.process_rescue_turn(session_id, suggestion):
-        stage = update["stage"]
-        ai_dom = update["ai_dominance"]
-        user_dom = update["user_dominance"]
-        
-        if stage == "ai_thinking":
-            chat_history.append({"role": "assistant", "content": "🤔 **对方正在回应...**"})
-            yield (chat_history, "对方思考中...", ai_dom, user_dom, None)
-        
-        elif stage == "complete":
-            if chat_history and chat_history[-1].get("content", "").startswith("🤔"):
-                chat_history.pop()
-            
-            ai_text = update["ai_text"]
-            audio_path = update.get("audio_path")
-            
-            scenario = orch.scenarios.get(session.scenario_id, {})
-            characters = scenario.get("characters", [])
-            
-            if "\n" in ai_text and any(c['name'] + ":" in ai_text or c['name'] + "：" in ai_text for c in characters):
-                lines = ai_text.split('\n')
-                for line in lines:
-                    if ":" in line or "：" in line:
-                        sep = ":" if ":" in line else "："
-                        name, text = line.split(sep, 1)
-                        name_stripped = name.strip()
-                        avatar = ""
-                        for c in characters:
-                            if c['name'] == name_stripped:
-                                avatar = c.get('avatar', '')
-                                break
-                        chat_history.append({
-                            "role": "assistant", 
-                            "content": text.strip(), 
-                            "metadata": {"title": f"{avatar} {name_stripped}" if avatar else name_stripped}
-                        })
-            else:
-                chat_history.append({
-                    "role": "assistant", 
-                    "content": ai_text, 
-                    "metadata": {"title": session.ai_name}
-                })
-            
-            yield (chat_history, "✓ 对方已回应", ai_dom, user_dom, audio_path)
+    # 将建议填入输入框，由用户决定是否发送
+    return (chat_history, "💡 已生成高情商回复建议，请查看输入框", session.ai_dominance, session.user_dominance, None, suggestion)
 
 def end_session(session_id: str, chat_history: List):
     """结束对决，生成总结和建议"""

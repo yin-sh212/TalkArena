@@ -2,6 +2,7 @@ import uuid
 import os
 import re
 import time
+import json
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -449,7 +450,7 @@ class Orchestrator:
         }
     
     def get_rescue_suggestion(self, session_id: str) -> str:
-        """救场逻辑：根据当前场景和对话历史，给用户提供建议或替用户说话"""
+        """救场逻辑：根据当前场景和对话历史，生成高情商回复供用户参考"""
         if session_id not in self.sessions:
             return "对局已结束"
         
@@ -459,7 +460,7 @@ class Orchestrator:
         context_lines = [f"{name}: {text}" for name, text in session.chat_history[-10:]]
         context = "\n".join(context_lines)
         
-        prompt = f"""你是一位顶尖的沟通专家和场控大师。目前用户在以下场景中陷入了困境，请你进行"救场"。
+        prompt = f"""你是一位顶尖的沟通专家。用户在以下场景中需要帮助，请你以用户的身份（晚辈/下属）生成一段高情商回复供其参考。
 
 【场景】{scenario['name']}
 【对手】{session.ai_name}
@@ -469,17 +470,17 @@ class Orchestrator:
 {context}
 
 【任务】
-你是"救场大师"，直接介入这场对话帮助用户。
-请以救场大师的身份，直接对{session.ai_name}说一段话来反击或化解困境。
+你要以用户（晚辈/下属）的第一人称身份生成一条得体的回复，用户可以直接复制发送。
 要求：
-1. 以第一人称说话（"我作为救场大师..."或直接说）
-2. 简短有力，直击要害
-3. 符合场景氛围，能扭转局势
+1. 必须以第一人称说话（“我...”），不能用第三人称（禁止“你应该...”“可以说...”）
+2. 简短有力，直击要害，不超过50字
+3. 符合晚辈/下属身份，谦逊但不失气场
+4. 能化解困境或扶回局势
 
-请直接 output台词，不要有任何解释。"""
+请直接输出台词，不要有任何解释。"""
         
-        suggestion = self.llm.generate(prompt, max_new_tokens=200)
-        logger.info(f"[救场] Session {session_id} 触发救场，建议: {suggestion[:50]}...")
+        suggestion = self.llm.generate(prompt, max_new_tokens=150)
+        logger.info(f"[救场] Session {session_id} 生成建议: {suggestion[:50]}...")
         return suggestion
     
     def process_rescue_turn(self, session_id: str, rescue_text: str) -> Generator:
@@ -717,3 +718,146 @@ class Orchestrator:
         del self.sessions[session_id]
         
         return summary, str(file_path)
+    
+    def generate_game_report(self, session_id: str, scene_name: str, npc_list: List[Dict]) -> Dict:
+        """生成游戏结束后的全面复盘报告"""
+        if session_id not in self.sessions:
+            raise ValueError(f"Session not found: {session_id}")
+        
+        session = self.sessions[session_id]
+        scenario = self.scenarios.get(session.scenario_id, {})
+        
+        # 构建对话历史
+        history_log = "\n".join([f"{name}: {text}" for name, text in session.chat_history])
+        
+        # 第一次调用：生成五维度得分
+        scores_prompt = f"""# Role
+你是“山东人饭局情商大挑战”的打分裁判，负责给玩家在饭局对话中的表现从五个维度打分。
+
+# Input
+- 场景描述：{scene_name}
+- NPC设定列表：{json.dumps(npc_list, ensure_ascii=False)}
+- 历史对话：
+{history_log}
+
+# Task
+分析对话，给出玩家在五个维度的客观得分，满分10，输出从0-100的数值。5个指标如下：
+1. "oily": 圆滑度：避重就轻、推诱话题的能力,
+2. "friendliness": 亲和力：共情与情绪价值提供,
+3. "logic": 逻辑性：论据支撑与表达条理,
+4. "humor": 幽默感：破冰与自嘲能力,
+5. "respect": 懂规矩：礼仪遵守与分寸感。
+
+# Output Format (JSON Only)
+{{
+  "metrics": {{
+    "oily": int,
+    "friendliness": int,
+    "logic": int,
+    "humor": int,
+    "respect": int
+  }}
+}}
+
+# Constraints
+只输出 JSON格式，不得输出任何额外解释文字"""
+        
+        logger.info("[复盘报告] 步骤1: 生成五维度得分...")
+        scores_result = self.llm.generate(scores_prompt, max_new_tokens=200)
+        
+        # 解析JSON
+        try:
+            scores_data = json.loads(scores_result.strip())
+            scores = scores_data.get("metrics", {})
+        except:
+            logger.warning("[复盘报告] JSON解析失败，使用默认分数")
+            scores = {"oily": 50, "friendliness": 50, "logic": 50, "humor": 50, "respect": 50}
+        
+        # 计算勋章
+        from ui.report import get_medal_by_scores
+        medal = get_medal_by_scores(scores)
+        
+        # 第二次调用：综合点评
+        summary_prompt = f"""# Role
+你是一位在山东饭局混迹三十年、眼光毒辣的人情世故宗师。你的任务是根据玩家在“山东人饭局情商大挑战”中的对话表现，给出一份既专业又扎心的总结陈词。
+
+# Input
+- 场景描述：{scene_name}
+- NPC设定列表：{json.dumps(npc_list, ensure_ascii=False)}
+- 历史对话：
+{history_log}
+- 玩家称号：{medal}
+
+# Task 
+分析对话历史，撰写一段 100 字以内的玩家表现综合点评。
+
+# Writing Constraints
+- 犠利度：不要客气，要像一位严厉的长辈或刻薄的职场前辈。如果表现差，请使用“社交自杀”、“拆迁队”、“冷场王”等词汇。
+- 专业深度：点评必须基于真实的社交潜规则。
+- 称号挂钩：点评必须匹配生成的玩家称号。
+- 结构化：第一句：定性评价；中间语句：逻辑分析；结尾句：总结。
+
+# Constraints
+直接输出总结陈词内容，不得输出任何额外解释文字"""
+        
+        logger.info("[复盘报告] 步骤2: 生成综合点评...")
+        summary = self.llm.generate(summary_prompt, max_new_tokens=300)
+        
+        # 第三次调用：NPC OS + 改进建议
+        npc_prompt = f"""# Role
+你是一位在山东饭局混迹三十年、毒舌且看透世事的“人情世故大宗师”。
+
+# Input Data
+- 场景描述：{scene_name}
+- NPC设定列表：{json.dumps(npc_list, ensure_ascii=False)}
+- 历史对话：
+{history_log}
+- 玩家称号：{medal}
+
+# Tasks
+1. 生成 NPC 内心 OS：为 NPC 列表中的每人生成一段 20 字以内的心理活动。要求口语化，符合人设。
+2. 生成改进建议：针对玩家最不合时宜的一句话，给出高情商台词改写及避坑逻辑。
+
+# Output Format (Strict JSON)
+{{
+  "npc_inner_voice": [
+    {{"name": "...", "os": "..."}},
+    {{"name": "...", "os": "..."}}
+  ],
+  "high_light_suggestion": "..."
+}}
+
+# Constraints
+只输出 JSON格式，不得输出任何额外解释文字"""
+        
+        logger.info("[复盘报告] 步骤3: 生成NPC OS和建议...")
+        npc_result = self.llm.generate(npc_prompt, max_new_tokens=500)
+        
+        # 解析JSON
+        try:
+            npc_data = json.loads(npc_result.strip())
+            npc_os_list = npc_data.get("npc_inner_voice", [])
+            suggestion = npc_data.get("high_light_suggestion", "没有具体建议")
+        except:
+            logger.warning("[复盘报告] NPC JSON解析失败")
+            npc_os_list = [{"name": npc["name"], "os": "表现一般", "avatar": npc.get("avatar", "👤")} for npc in npc_list[:3]]
+            suggestion = "多观察，少说话。"
+        
+        # 添加avatar到NPC OS
+        for os_item in npc_os_list:
+            npc_name = os_item.get("name", "")
+            for npc in npc_list:
+                if npc.get("name") == npc_name:
+                    os_item["avatar"] = npc.get("avatar", "👤")
+                    break
+        
+        logger.info("[复盘报告] 生成完成")
+        
+        return {
+            "scene_name": scene_name,
+            "medal": medal,
+            "scores": scores,
+            "summary": summary,
+            "npc_os_list": npc_os_list,
+            "suggestion": suggestion
+        }

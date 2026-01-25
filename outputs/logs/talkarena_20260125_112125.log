@@ -1,0 +1,46 @@
+2026-01-25 11:21:25,909 [INFO] Handlers 初始化模型...
+2026-01-25 11:21:25,910 [INFO] ============================================================
+2026-01-25 11:21:25,910 [INFO] TalkArena Orchestrator 初始化
+2026-01-25 11:21:25,910 [INFO] ============================================================
+2026-01-25 11:21:25,910 [INFO] 加载 LLM 模型...
+2026-01-25 11:21:28,599 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-25 11:21:29,079 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-25 11:21:29,469 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-25 11:21:30,140 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-25 11:21:30,141 [INFO] 加载 TTS 模型...
+2026-01-25 11:21:31,002 [INFO] 加载 STT 模型...
+2026-01-25 11:21:31,262 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-25 11:21:31,263 [INFO] Handlers 模型初始化完成
+2026-01-25 11:21:32,838 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-01-25 11:21:32,874 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-01-25 11:21:33,383 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-25 11:21:34,787 [INFO] HTTP Request: GET https://api.gradio.app/v3/tunnel-request "HTTP/1.1 200 OK"
+2026-01-25 11:22:00,935 [INFO] ============================================================
+2026-01-25 11:22:00,935 [INFO] [SESSION b7e9089e] 新对局开始
+2026-01-25 11:22:00,935 [INFO]   场景: 山东人的饭桌
+2026-01-25 11:22:00,935 [INFO]   AI角色: 大舅 / 大妗子 / 表哥
+2026-01-25 11:22:00,935 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-25 11:22:00,936 [INFO] ============================================================
+2026-01-25 11:22:07,357 [INFO] --------------------------------------------------
+2026-01-25 11:22:07,357 [INFO] [SESSION b7e9089e] 第 1 回合
+2026-01-25 11:22:07,357 [INFO] [用户输入] 6
+2026-01-25 11:22:07,357 [INFO] [犹豫惩罚] 用户思考 6.4s，气场 -6
+2026-01-25 11:22:07,357 [INFO] [气场变动] 用户 44 vs AI 56
+2026-01-25 11:22:07,360 [INFO] [AI思考] 开始生成回复... (模型: Qwen2.5-7B-Instruct)
+2026-01-25 11:22:10,516 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-25 11:22:10,517 [INFO] [AI回复] (3.2s) 大妗子: (轻轻拍了拍桌子)外甥啊，大舅说了，这第一杯咱得喝了，喝了才有面子嘛！
+表哥: (凑近用户耳边)外甥，咱爷俩不是一直说好了吗？大舅起头，你就跟着来呗！
+你: (微微皱眉)大妗子，表哥，咱今天...
+2026-01-25 11:22:10,517 [INFO] [AI思考惩罚] 思考 3.2s，AI气场 -2
+2026-01-25 11:22:11,903 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-25 11:22:11,904 [INFO] [裁判判定] 气场转移: -25
+2026-01-25 11:22:11,904 [INFO] [裁判点评] 用户的发言虽然试图通过表达个人意愿来转移气场，但在情境中显得较为随意，未能有效回应大妗子和表哥的攻势。
+2026-01-25 11:22:11,904 [INFO] [气场结果] 用户 46 -> 21 | AI 54 -> 79
+2026-01-25 11:22:16,493 [INFO] [TTS] 生成语音: outputs\audio\b7e9089e\turn_1.wav
+2026-01-25 11:22:16,493 [INFO] --------------------------------------------------
+2026-01-25 11:22:21,914 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-25 11:22:21,915 [INFO] [救场] Session b7e9089e 触发救场，建议: 我作为救场大师，来给大家泼点冷水。咱们聚餐图的是啥？开心！第一杯不喝，后面再怎么跟也显得矫情了吧？大...
+2026-01-25 11:22:21,917 [INFO] [SESSION b7e9089e] 救场大师介入，对手回应中...
+2026-01-25 11:22:25,863 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-25 11:22:25,863 [INFO] [AI回复] (3.9s) 大舅: (瞪大眼睛，语气严厉)救场大师，你这是啥意思？我们图的是啥？咱们鲁中人讲究的就是这个规矩，没规矩咋成！外甥，你要是不喝，那就是不给大舅长脸，也不给咱家族长脸！
+表哥: (附和着)就是就是，外甥...
