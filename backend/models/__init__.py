@@ -36,6 +36,8 @@ class SessionResponse(BaseModel):
     created_at: datetime
     pancake_score: int = 0
     garlic_score: int = 0
+    conversation_history: List[Dict[str, Any]] = []  # 对话历史（包含开场白）
+    round: int = 0
 
 
 # ========== 对话相关 ==========

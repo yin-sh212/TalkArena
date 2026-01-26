@@ -1,5 +1,14 @@
 <template>
   <div class="config-page">
+    <!-- 全屏加载遮罩 -->
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-spinner">⏳</div>
+        <h2 class="loading-text">正在准备饭局...</h2>
+        <p class="loading-subtitle">AI正在生成开场白，请稍候</p>
+      </div>
+    </div>
+
     <div class="header">
       <h1 class="title">山东人的饭桌</h1>
       <p class="subtitle">选择你的饭局战场</p>
@@ -29,11 +38,18 @@
           饭局成员 <span class="ai-badge">AI生成</span>
         </h2>
         <div class="roster-container">
-          <div v-for="member in members" :key="member.name" class="roster-card">
+          <div
+            v-for="member in members"
+            :key="member.name"
+            class="roster-card"
+            :class="{ selected: selectedMembers.includes(member.name) }"
+            @click="toggleMemberSelection(member)"
+          >
             <div class="roster-avatar">{{ member.avatar }}</div>
             <div class="roster-name">{{ member.name }}</div>
             <div class="roster-role">{{ member.role }}</div>
             <div class="roster-personality">{{ member.personality }}</div>
+            <div v-if="selectedMembers.includes(member.name)" class="selected-badge">✓</div>
           </div>
         </div>
 
@@ -49,10 +65,10 @@
 
       <!-- 开始按钮 -->
       <div class="bottom-actions">
-        <button class="btn btn-primary btn-large" @click="startGame">
+        <button class="btn btn-primary btn-large" @click="startGame" :disabled="isLoading">
           🍺 入席开整
         </button>
-        <button class="btn btn-link" @click="backToScenes">
+        <button class="btn btn-link" @click="backToScenes" :disabled="isLoading">
           ← 返回场景选择
         </button>
       </div>
@@ -94,6 +110,12 @@ const scenes = ref([
 
 const selectedScene = ref('商务宴请')
 const sceneDescription = ref('高端局，主陪副陪分清，话权要巧妙抓住，让话题走在你的节奏。')
+
+// 饭局成员选择状态
+const selectedMembers = ref([])
+
+// 加载状态
+const isLoading = ref(false)
 
 // 饭局成员
 const members = ref([
@@ -162,10 +184,21 @@ const selectScene = (scene) => {
   sceneDescription.value = scene.description
 }
 
+const toggleMemberSelection = (member) => {
+  const index = selectedMembers.value.indexOf(member.name)
+  if (index === -1) {
+    selectedMembers.value.push(member.name)
+  } else {
+    selectedMembers.value.splice(index, 1)
+  }
+}
+
 const regenerateMembers = () => {
   // 从成员池中随机选择3个不同的成员
   const shuffled = [...memberPool].sort(() => 0.5 - Math.random())
   members.value = shuffled.slice(0, 3)
+  // 清空选择状态
+  selectedMembers.value = []
 }
 
 const editMembers = () => {
@@ -174,11 +207,25 @@ const editMembers = () => {
 
 const startGame = async () => {
   try {
+    // 检查是否有选择成员
+    if (selectedMembers.value.length === 0) {
+      alert('请至少选择一位饭局成员')
+      return
+    }
+
+    // 设置加载状态
+    isLoading.value = true
+
+    // 获取选中的成员详细信息
+    const selectedMemberDetails = members.value.filter(m =>
+      selectedMembers.value.includes(m.name)
+    )
+
     // 创建配置对象
     const config = {
       scene: selectedScene.value,
       description: sceneDescription.value,
-      members: members.value
+      members: selectedMemberDetails
     }
 
     // 创建会话
@@ -189,6 +236,9 @@ const startGame = async () => {
   } catch (error) {
     console.error('创建会话失败:', error)
     alert('创建会话失败，请重试')
+  } finally {
+    // 无论成功失败，都重置加载状态
+    isLoading.value = false
   }
 }
 
@@ -203,7 +253,9 @@ const backToScenes = () => {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 2rem;
+  padding-bottom: 4rem;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .header {
@@ -312,12 +364,37 @@ const backToScenes = () => {
   padding: 1.5rem;
   text-align: center;
   transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+  position: relative;
 }
 
 .roster-card:hover {
   background: #f3f4f6;
   transform: translateY(-5px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.roster-card.selected {
+  background: #e0e7ff;
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.selected-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #667eea;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .roster-avatar {
@@ -378,9 +455,14 @@ const backToScenes = () => {
   color: white;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-large {
@@ -417,5 +499,50 @@ const backToScenes = () => {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 全屏加载遮罩 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+.loading-content {
+  text-align: center;
+  color: white;
+}
+
+.loading-spinner {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.loading-subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
 }
 </style>

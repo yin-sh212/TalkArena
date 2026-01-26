@@ -16,6 +16,9 @@ export const useGameStore = defineStore('game', {
   actions: {
     async createSession(scenarioId, config = null) {
       try {
+        // 先清空旧的会话状态
+        this.resetGame()
+
         const response = await api.createSession({
           scenario_id: scenarioId,
           config
@@ -23,8 +26,11 @@ export const useGameStore = defineStore('game', {
 
         this.sessionId = response.session_id
         this.scenarioId = response.scenario_id
-        this.pancakeScore = response.pancake_score
-        this.garlicScore = response.garlic_score
+        this.pancakeScore = response.pancake_score || 0
+        this.garlicScore = response.garlic_score || 0
+        this.round = 0
+        // 保存开场白到对话历史
+        this.conversationHistory = response.conversation_history || []
         this.gameStatus = 'playing'
 
         return response
@@ -34,32 +40,74 @@ export const useGameStore = defineStore('game', {
       }
     },
 
-    async sendMessage(message) {
+    async sendMessage(message, onStream) {
       try {
-        const response = await api.sendMessage({
-          session_id: this.sessionId,
-          message,
-          message_type: 'text'
-        })
-
-        // 更新游戏状态
-        this.pancakeScore = response.game_state.pancake_score
-        this.garlicScore = response.game_state.garlic_score
-        this.round = response.game_state.round
-
-        // 添加到对话历史
+        // 添加用户消息到历史
         this.conversationHistory.push({
           role: 'user',
           content: message
         })
+
+        // 创建AI消息占位符
+        const aiMessageIndex = this.conversationHistory.length
         this.conversationHistory.push({
           role: 'assistant',
-          name: response.npc_name,
-          content: response.message,
-          judgment: response.judgment
+          name: '',
+          content: '',
+          judgment: null,
+          streaming: true
         })
 
-        return response
+        let finalResponse = null
+
+        // 使用流式API
+        await api.sendMessageStream(
+          {
+            session_id: this.sessionId,
+            message,
+            message_type: 'text'
+          },
+          (event) => {
+            if (onStream) {
+              onStream(event)
+            }
+
+            // 更新AI消息内容 - 响应 orchestrator 的事件
+            if (event.stage === 'ai_thinking') {
+              // AI开始思考，保持streaming状态
+              this.conversationHistory[aiMessageIndex].streaming = true
+            } else if (event.stage === 'ai_response') {
+              // AI流式生成中，实时更新文本
+              if (event.data && event.data.ai_text) {
+                this.conversationHistory[aiMessageIndex].content = event.data.ai_text
+                this.conversationHistory[aiMessageIndex].streaming = true  // 保持流式状态
+              }
+            } else if (event.stage === 'complete') {
+              // Orchestrator完成生成，显示AI文本
+              if (event.data && event.data.ai_text) {
+                this.conversationHistory[aiMessageIndex].content = event.data.ai_text
+                this.conversationHistory[aiMessageIndex].streaming = false
+              }
+            } else if (event.stage === 'final') {
+              // 最终响应
+              finalResponse = event.data
+              this.conversationHistory[aiMessageIndex] = {
+                role: 'assistant',
+                name: event.data.npc_name,
+                content: event.data.message,
+                judgment: event.data.judgment,
+                streaming: false
+              }
+
+              // 更新游戏状态
+              this.pancakeScore = event.data.game_state.pancake_score
+              this.garlicScore = event.data.game_state.garlic_score
+              this.round = event.data.game_state.round
+            }
+          }
+        )
+
+        return finalResponse
       } catch (error) {
         console.error('发送消息失败:', error)
         throw error

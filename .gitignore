@@ -1,3 +1,43 @@
+# 模型文件
 *.safetensors
 *.zip
 *.pt
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 日志文件
+*.log
+logs/
+backend/outputs/logs/
+outputs/logs/
+
+# 音频文件
+*.mp3
+*.wav
+
+# 系统文件
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 环境变量
+.env
+.env.local
+
+# 前端构建产物
+frontend/dist/
+frontend/node_modules/.vite/
+
+# Vosk 模型（如果太大）
+backend/models/vosk-model-*/

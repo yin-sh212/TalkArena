@@ -9,7 +9,7 @@
         <button class="rescue-btn" @click="onRescue" :disabled="loading">
           🆘 救场
         </button>
-        <button class="end-btn" @click="onEndGame">
+        <button class="end-btn" @click="onEndGame" :disabled="loading">
           🏁 结束对决
         </button>
 
@@ -58,22 +58,17 @@
             </div>
             <div class="message-content">
               <div class="message-name">{{ msg.name || (msg.role === 'user' ? '你' : 'AI') }}</div>
-              <div class="message-text">{{ msg.content }}</div>
+              <!-- 如果正在流式加载，显示加载动画 -->
+              <div v-if="msg.streaming" class="typing-indicator">
+                <span></span><span></span><span></span>
+              </div>
+              <!-- 否则显示消息内容 -->
+              <div v-else class="message-text">{{ msg.content }}</div>
               <div v-if="msg.judgment" class="message-judgment">
                 <span :class="msg.judgment.type">
                   {{ msg.judgment.type === 'pancake' ? '🥞' : '🧄' }}
                   {{ msg.judgment.comment }}
                 </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 加载中提示 -->
-          <div v-if="loading" class="message assistant loading">
-            <div class="message-avatar">🤖</div>
-            <div class="message-content">
-              <div class="typing-indicator">
-                <span></span><span></span><span></span>
               </div>
             </div>
           </div>
@@ -161,12 +156,17 @@ const sendMessage = async () => {
   critiqueVisible.value = false
 
   try {
-    const response = await gameStore.sendMessage(message)
+    const response = await gameStore.sendMessage(message, (event) => {
+      // 实时滚动到底部
+      nextTick(() => {
+        scrollToBottom()
+      })
 
-    // 显示判定反馈
-    if (response.judgment) {
-      showCritique(response.judgment)
-    }
+      // 当收到最终响应时显示判定
+      if (event.stage === 'final' && event.data.judgment) {
+        showCritique(event.data.judgment)
+      }
+    })
 
     // 滚动到底部
     await nextTick()
@@ -211,12 +211,17 @@ const onRescue = async () => {
 const onEndGame = async () => {
   if (!confirm('确定要结束对决吗？')) return
 
+  if (loading.value) return
+
+  loading.value = true
   try {
     await gameStore.endSession()
     router.push('/report')
   } catch (error) {
     console.error('结束游戏失败:', error)
     alert('操作失败，请重试')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -328,8 +333,13 @@ onMounted(async () => {
   color: #333;
 }
 
-.end-btn:hover {
+.end-btn:hover:not(:disabled) {
   background: #f5f5f5;
+}
+
+.end-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* 气场侧边栏 */

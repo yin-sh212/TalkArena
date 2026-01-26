@@ -19,6 +19,9 @@ async def create_session(request: SessionCreate):
     """创建新会话"""
     session_id = str(uuid.uuid4())
 
+    # 调用游戏服务初始化,获取开场白
+    opening_messages = game_service.init_session(session_id, request.scenario_id, request.config)
+
     # 初始化游戏会话
     session_data = {
         "session_id": session_id,
@@ -28,12 +31,9 @@ async def create_session(request: SessionCreate):
         "pancake_score": 0,
         "garlic_score": 0,
         "config": request.config.dict() if request.config else None,
-        "conversation_history": [],
+        "conversation_history": opening_messages,  # 包含开场白
         "round": 0
     }
-
-    # 调用游戏服务初始化
-    game_service.init_session(session_id, request.scenario_id, request.config)
 
     sessions[session_id] = session_data
 

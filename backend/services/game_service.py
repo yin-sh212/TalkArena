@@ -27,14 +27,84 @@ class GameService:
 
     def init_session(self, session_id: str, scenario_id: str, config: Optional[dict] = None):
         """初始化会话"""
+        # 创建orchestrator session来获取opening
+        orchestrator = self._get_orchestrator()
+        orch_session = orchestrator.start_session(scenario_id, config)
+
+        # 从orchestrator获取开场白
+        opening_messages = []
+        for name, text in orch_session.chat_history:
+            opening_messages.append({
+                "role": "assistant",
+                "name": name,
+                "content": text
+            })
+
         self.sessions[session_id] = {
             "scenario_id": scenario_id,
             "config": config,
-            "conversation_history": [],
+            "conversation_history": opening_messages,  # 包含开场白
             "pancake_score": 0,
             "garlic_score": 0,
-            "round": 0
+            "round": 0,
+            "orch_session_id": orch_session.session_id  # 已创建orchestrator session
         }
+
+        return opening_messages  # 返回开场白供API使用
+
+    async def process_message_stream(self, session_id: str, user_message: str, message_type: str = "text"):
+        """
+        流式处理用户消息
+
+        Yields:
+            事件字典,包含不同阶段的数据
+        """
+        if session_id not in self.sessions:
+            raise ValueError("会话不存在")
+
+        session = self.sessions[session_id]
+        orchestrator = self._get_orchestrator()
+
+        # 获取orchestrator session (应该已经在init_session时创建)
+        orch_session_id = session.get("orch_session_id")
+        if not orch_session_id:
+            raise ValueError("Orchestrator session未初始化")
+
+        # 流式处理
+        for event in orchestrator.process_turn_streaming(orch_session_id, user_message):
+            # 转发事件
+            yield {
+                "stage": event["stage"],
+                "data": event
+            }
+
+            if event["stage"] == "complete":
+                # 更新气场分数
+                orch_session = orchestrator.sessions[orch_session_id]
+                session["pancake_score"] = orch_session.user_dominance
+                session["garlic_score"] = orch_session.ai_dominance
+                session["round"] = orch_session.turn_count
+
+                # 发送完整响应
+                yield {
+                    "stage": "final",
+                    "data": {
+                        "session_id": session_id,
+                        "npc_name": orch_session.ai_name,
+                        "message": event.get("ai_text", ""),
+                        "audio_url": event.get("audio_path"),
+                        "judgment": {
+                            "score": abs(event.get("dominance_shift", 0)),
+                            "comment": event.get("judgment", ""),
+                            "type": "pancake" if event.get("dominance_shift", 0) > 0 else "garlic"
+                        },
+                        "game_state": {
+                            "round": session["round"],
+                            "pancake_score": session["pancake_score"],
+                            "garlic_score": session["garlic_score"]
+                        }
+                    }
+                }
 
     async def process_message(self, session_id: str, user_message: str, message_type: str = "text") -> Dict[str, Any]:
         """
