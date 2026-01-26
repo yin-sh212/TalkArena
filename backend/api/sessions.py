@@ -20,7 +20,8 @@ async def create_session(request: SessionCreate):
     session_id = str(uuid.uuid4())
 
     # 调用游戏服务初始化,获取开场白
-    opening_messages = game_service.init_session(session_id, request.scenario_id, request.config)
+    config_dict = request.config.dict() if request.config else None
+    opening_messages = game_service.init_session(session_id, request.scenario_id, config_dict)
 
     # 初始化游戏会话
     session_data = {

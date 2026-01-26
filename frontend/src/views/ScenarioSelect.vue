@@ -100,7 +100,7 @@ onMounted(async () => {
 .scenario-select {
   width: 100%;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f5f5f5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -117,14 +117,14 @@ onMounted(async () => {
 .title {
   font-size: 4rem;
   font-weight: 700;
-  color: white;
+  color: #d32f2f;
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .subtitle {
   font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #666;
 }
 
 .scenarios-grid {
@@ -176,7 +176,7 @@ onMounted(async () => {
 
 .footer {
   margin-top: 3rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: #999;
   font-size: 0.9rem;
 }
 

@@ -6,6 +6,7 @@ export const useGameStore = defineStore('game', {
     sessionId: null,
     scenarioId: null,
     scenarioName: '',
+    sessionConfig: null, // 保存会话配置（场景、角色等）
     pancakeScore: 0,
     garlicScore: 0,
     round: 0,
@@ -26,6 +27,7 @@ export const useGameStore = defineStore('game', {
 
         this.sessionId = response.session_id
         this.scenarioId = response.scenario_id
+        this.sessionConfig = config // 保存配置信息
         this.pancakeScore = response.pancake_score || 0
         this.garlicScore = response.garlic_score || 0
         this.round = 0
@@ -128,6 +130,7 @@ export const useGameStore = defineStore('game', {
       this.sessionId = null
       this.scenarioId = null
       this.scenarioName = ''
+      this.sessionConfig = null
       this.pancakeScore = 0
       this.garlicScore = 0
       this.round = 0

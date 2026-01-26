@@ -216,7 +216,14 @@ const onEndGame = async () => {
   loading.value = true
   try {
     await gameStore.endSession()
-    router.push('/report')
+
+    // 通过路由参数传递配置，避免store数据丢失
+    router.push({
+      path: '/report',
+      query: {
+        config: JSON.stringify(gameStore.sessionConfig || {})
+      }
+    })
   } catch (error) {
     console.error('结束游戏失败:', error)
     alert('操作失败，请重试')
@@ -253,15 +260,15 @@ onMounted(async () => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f5f5f5;
 }
 
 /* 视觉舞台 */
 .visual-stage {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background: white;
   padding: 1.5rem;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 2px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .stage-content {
@@ -269,7 +276,7 @@ onMounted(async () => {
 }
 
 .stage-title {
-  color: white;
+  color: #1f2937;
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
@@ -314,13 +321,13 @@ onMounted(async () => {
 }
 
 .rescue-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: #d32f2f;
   color: white;
 }
 
 .rescue-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
 }
 
 .rescue-btn:disabled {
@@ -358,11 +365,11 @@ onMounted(async () => {
 }
 
 .aura-item.pancake {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  background: #FFD700;
 }
 
 .aura-item.garlic {
-  background: linear-gradient(135deg, #9333ea 0%, #c026d3 100%);
+  background: #9333ea;
 }
 
 .aura-icon {
@@ -413,12 +420,12 @@ onMounted(async () => {
 }
 
 .critique-box.pancake {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  background: #FFD700;
   color: white;
 }
 
 .critique-box.garlic {
-  background: linear-gradient(135deg, #9333ea 0%, #c026d3 100%);
+  background: #9333ea;
   color: white;
 }
 
@@ -458,7 +465,7 @@ onMounted(async () => {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -467,7 +474,7 @@ onMounted(async () => {
 }
 
 .message.user .message-avatar {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: #d32f2f;
 }
 
 .message-content {
@@ -493,7 +500,7 @@ onMounted(async () => {
 }
 
 .message.user .message-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #d32f2f;
   color: white;
 }
 
@@ -572,14 +579,14 @@ onMounted(async () => {
 }
 
 .message-input:focus {
-  border-color: #667eea;
+  border-color: #d32f2f;
 }
 
 .send-btn {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #d32f2f;
   color: white;
   font-size: 1rem;
   font-weight: 600;
@@ -589,7 +596,7 @@ onMounted(async () => {
 
 .send-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
 }
 
 .send-btn:disabled {

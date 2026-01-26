@@ -35,8 +35,9 @@
       <!-- 饭局成员区 -->
       <div class="section">
         <h2 class="section-title">
-          饭局成员 <span class="ai-badge">AI生成</span>
+          选择你的对手 <span class="ai-badge">AI扮演</span>
         </h2>
+        <p class="section-subtitle">这些角色由AI扮演，他们会在酒桌上向你发起挑战</p>
         <div class="roster-container">
           <div
             v-for="member in members"
@@ -251,7 +252,7 @@ const backToScenes = () => {
 .config-page {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f5f5f5;
   padding: 2rem;
   padding-bottom: 4rem;
   overflow-y: auto;
@@ -267,14 +268,14 @@ const backToScenes = () => {
 .title {
   font-size: 3rem;
   font-weight: 700;
-  color: white;
+  color: #1f2937;
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .subtitle {
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #666;
 }
 
 .content {
@@ -302,11 +303,19 @@ const backToScenes = () => {
 
 .ai-badge {
   font-size: 0.75rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #d32f2f;
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-weight: 500;
+}
+
+.section-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  font-style: italic;
 }
 
 /* 场景卡片 */
@@ -335,9 +344,9 @@ const backToScenes = () => {
 }
 
 .scene-card.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #d32f2f;
   color: white;
-  border-color: #667eea;
+  border-color: #d32f2f;
   transform: scale(1.05);
 }
 
@@ -377,7 +386,7 @@ const backToScenes = () => {
 
 .roster-card.selected {
   background: #e0e7ff;
-  border-color: #667eea;
+  border-color: #d32f2f;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
@@ -385,7 +394,7 @@ const backToScenes = () => {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #667eea;
+  background: #d32f2f;
   color: white;
   width: 30px;
   height: 30px;
@@ -411,7 +420,7 @@ const backToScenes = () => {
 
 .roster-role {
   font-size: 0.85rem;
-  color: #667eea;
+  color: #d32f2f;
   font-weight: 500;
   margin-bottom: 0.75rem;
 }
@@ -441,23 +450,23 @@ const backToScenes = () => {
 
 .btn-secondary {
   background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #d32f2f;
+  border: 2px solid #d32f2f;
 }
 
 .btn-secondary:hover {
-  background: #667eea;
+  background: #d32f2f;
   color: white;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #d32f2f;
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
 }
 
 .btn-primary:disabled {
@@ -472,7 +481,7 @@ const backToScenes = () => {
 
 .btn-link {
   background: transparent;
-  color: white;
+  color: #666;
   border: none;
   font-size: 0.95rem;
 }

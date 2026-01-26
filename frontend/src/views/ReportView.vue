@@ -86,17 +86,53 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { useGameStore } from '@/store/game'
 import { Chart, RadarController, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend } from 'chart.js'
 
 // 注册Chart.js组件
 Chart.register(RadarController, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend)
 
 const router = useRouter()
+const route = useRoute()
+const gameStore = useGameStore()
 const radarCanvas = ref(null)
 
+// 从路由参数或store获取配置
+const getSessionConfig = () => {
+  // 优先从路由参数读取
+  if (route.query.config) {
+    try {
+      return JSON.parse(route.query.config)
+    } catch (e) {
+      console.error('[ReportView] 解析路由配置失败:', e)
+    }
+  }
+  // 回退到store
+  return gameStore.sessionConfig || {}
+}
+
+const sessionConfig = ref(getSessionConfig())
+
+// 使用computed动态获取配置数据
+const sceneName = computed(() => {
+  return sessionConfig.value?.scene || '商务宴请'
+})
+
+// 获取真实的NPC列表（从配置中），使用computed确保响应式
+const realNpcList = computed(() => {
+  if (sessionConfig.value?.members && sessionConfig.value.members.length > 0) {
+    return sessionConfig.value.members
+  }
+  // 默认值
+  return [
+    { name: '王总', avatar: '👔' },
+    { name: '李总', avatar: '👨‍💼' },
+    { name: '小赵', avatar: '👩' }
+  ]
+})
+
 // 模拟数据（实际应该从API获取）
-const sceneName = ref('商务宴请')
 const medal = ref('饭局操盘手')
 const scores = ref({
   oily: 75,
@@ -106,24 +142,25 @@ const scores = ref({
   respect: 70
 })
 const summary = ref('表现中规中矩，在商务场合展现出了基本的职场素养。逻辑性表现突出，能够有条理地陈述观点，但幽默感略显不足，建议在适当时机加入轻松话题活跃气氛。整体气场稳定，没有明显失误，但也缺乏出彩表现，属于安全型选手。')
-const npcOsList = ref([
-  {
-    name: '王总',
-    avatar: '👔',
-    os: '这小子说话还算靠谱，就是太正经了点，没啥意思。'
-  },
-  {
-    name: '李总',
-    avatar: '👨‍💼',
-    os: '逻辑清楚，但缺少人情味，不太好深交。'
-  },
-  {
-    name: '小赵',
-    avatar: '👩',
-    os: '比我强多了，至少不会踩雷...'
-  }
-])
+
+// 使用真实的NPC信息，但OS还是模拟的
+const npcOsList = computed(() => {
+  return realNpcList.value.map((npc, index) => ({
+    name: npc.name,
+    avatar: npc.avatar || '👤',
+    os: index === 0 ? '这小子说话还算靠谱，就是太正经了点，没啥意思。' :
+        index === 1 ? '逻辑清楚，但缺少人情味，不太好深交。' :
+        '比我强多了，至少不会踩雷...'
+  }))
+})
+
 const suggestion = ref('建议在保持专业的同时，适当增加一些轻松话题。可以在敬酒环节加入一些得体的玩笑，拉近与对方的距离。记住：商务宴请不仅是谈生意，更是建立信任的过程。')
+
+onMounted(() => {
+  setTimeout(() => {
+    initRadarChart()
+  }, 100)
+})
 
 const medalColor = computed(() => {
   const avg = (scores.value.oily + scores.value.friendliness + scores.value.logic + scores.value.humor + scores.value.respect) / 5
@@ -188,12 +225,6 @@ const playAgain = () => {
 const backToHome = () => {
   router.push('/')
 }
-
-onMounted(() => {
-  setTimeout(() => {
-    initRadarChart()
-  }, 100)
-})
 </script>
 
 <style scoped>
@@ -425,23 +456,23 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #d32f2f;
   color: white;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
 }
 
 .btn-secondary {
   background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #d32f2f;
+  border: 2px solid #d32f2f;
 }
 
 .btn-secondary:hover {
-  background: #667eea;
+  background: #d32f2f;
   color: white;
 }
 
