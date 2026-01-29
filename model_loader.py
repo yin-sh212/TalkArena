@@ -104,51 +104,7 @@ class LLMLoader:
                 return self._generate_local(text, max_new_tokens, temperature)
         else:
             return self._generate_local(text, max_new_tokens, temperature)
-
-    def generate_stream(self, text: str, max_new_tokens: int = 2000, temperature: float = 0.7):
-        """流式生成回复 - yield每个token"""
-        if self.use_api:
-            try:
-                yield from self._generate_api_stream(text, max_new_tokens, temperature)
-            except Exception as e:
-                print(f"[LLMLoader] API流式调用失败: {e}")
-                # 流式失败时降级到普通generate
-                result = self.generate(text, max_new_tokens, temperature)
-                # 模拟流式输出
-                for char in result:
-                    yield char
-        else:
-            # 本地模型暂不支持流式，模拟输出
-            result = self._generate_local(text, max_new_tokens, temperature)
-            for char in result:
-                yield char
     
-    def _generate_api_stream(self, text: str, max_new_tokens: int, temperature: float):
-        """使用魔搭 API 流式生成"""
-        import time
-
-        start = time.time()
-        try:
-            stream = self.client.chat.completions.create(
-                model=self.model_name,
-                messages=[{"role": "user", "content": text}],
-                max_tokens=max_new_tokens,
-                temperature=temperature,
-                top_p=0.9,
-                stream=True  # 启用流式
-            )
-
-            for chunk in stream:
-                if chunk.choices[0].delta.content:
-                    yield chunk.choices[0].delta.content
-
-            elapsed = time.time() - start
-            print(f"[LLMLoader] 流式API完成: {elapsed:.1f}s")
-
-        except Exception as e:
-            print(f"[LLMLoader] 流式API失败: {e}")
-            raise
-
     def _generate_api(self, text: str, max_new_tokens: int, temperature: float) -> str:
         """使用魔搭 API 生成，带重试和模型轮换"""
         import time
