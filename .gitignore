@@ -36,7 +36,7 @@ Thumbs.db
 .env.local
 
 # 前端构建产物
-frontend/dist/
+# frontend/dist/  # ModelScope 部署需要这个目录，所以不要忽略
 frontend/node_modules/.vite/
 
 # Vosk 模型（如果太大）

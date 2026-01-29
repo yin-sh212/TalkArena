@@ -34,7 +34,12 @@ app.include_router(scenarios.router, prefix="/api/scenarios", tags=["场景管�
 app.include_router(sessions.router, prefix="/api/sessions", tags=["会话管理"])
 app.include_router(chat.router, prefix="/api/chat", tags=["对话"])
 
-@app.get("/")
+# 挂载前端静态文件 (在所有 API 路由之后)
+frontend_dist = os.path.join(project_root, "frontend", "dist")
+if os.path.exists(frontend_dist):
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
+
+@app.get("/api")
 async def root():
     return {
         "message": "TalkArena API",
