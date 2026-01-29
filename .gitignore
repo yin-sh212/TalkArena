@@ -41,3 +41,6 @@ frontend/node_modules/.vite/
 
 # Vosk 模型（如果太大）
 backend/models/vosk-model-*/
+
+# TTS 模型（运行时从 ModelScope Hub 动态下载）
+models/tts/
