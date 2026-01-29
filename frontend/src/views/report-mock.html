@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>局后复盘 - 社交自杀现场</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --bg-color: #2c313c;
+        --card-bg: #ffffff;
+        --primary-accent: #4a5dca;
+        --btn-dark: #1a1a1a;
+        --btn-light: #ffffff;
+        --share-purple: #8e7cc3;
+        --danger-accent: #e74c3c;
+        --text-main: #1a1a1a;
+        --text-sub: #666;
+        --smooth-transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      body {
+        background-color: var(--bg-color);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      /* --- 加载界面 --- */
+      #loading-screen {
+        text-align: center;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-top: 5px solid var(--primary-accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* --- 报告卡片 --- */
+      #report-card {
+        background: var(--card-bg);
+        width: 940px;
+        height: 680px; /* 略微调高以容纳3个NPC */
+        border-radius: 24px;
+        display: none;
+        overflow: hidden;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .left-panel {
+        flex: 1;
+        padding: 40px;
+        border-right: 1px dashed #eee;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .right-panel {
+        flex: 1.3;
+        padding: 40px;
+        background: #fafafa;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .medal-badge,
+      .score-item,
+      .os-row,
+      .suggestion-box,
+      .btn {
+        transition: var(--smooth-transition);
+        will-change: transform, box-shadow;
+      }
+
+      .medal-badge {
+        background: var(--danger-accent);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 18px;
+        transform: rotate(-3deg);
+        box-shadow: 4px 8px 15px rgba(231, 76, 60, 0.3);
+        margin: 10px 0;
+        cursor: default;
+      }
+      .medal-badge:hover {
+        transform: rotate(-3deg) scale(1.05);
+        box-shadow: 0 10px 25px rgba(231, 76, 60, 0.5);
+      }
+
+      .score-details {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 20px;
+        gap: 10px;
+      }
+
+      .score-item {
+        flex: 1;
+        background: #f8f9fa;
+        padding: 10px 5px;
+        border-radius: 10px;
+        text-align: center;
+        border: 1px solid #eee;
+        cursor: pointer;
+      }
+      .score-item:hover {
+        transform: translateY(-5px) scale(1.05);
+        background: #fff;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border-color: var(--primary-accent);
+      }
+
+      .score-item span {
+        display: block;
+        font-size: 11px;
+        color: var(--text-sub);
+        margin-bottom: 4px;
+      }
+      .score-item b {
+        font-size: 15px;
+        color: var(--primary-accent);
+      }
+
+      /* NPC OS 气泡 */
+      .os-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .os-row {
+        display: flex;
+        align-items: stretch;
+        gap: 12px;
+        cursor: default;
+      }
+      .os-row:hover {
+        transform: translateX(5px) scale(1.01);
+      }
+      .os-row:hover .os-bubble {
+        background: #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .npc-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #eee;
+        flex-shrink: 0;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .npc-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .os-bubble {
+        background: #f0f2f5;
+        padding: 10px 14px;
+        border-radius: 0 14px 14px 14px;
+        font-size: 12px;
+        line-height: 1.4;
+        flex-grow: 1;
+        transition: var(--smooth-transition);
+      }
+      .os-bubble b {
+        color: var(--primary-accent);
+        display: block;
+        font-size: 11px;
+        margin-bottom: 2px;
+      }
+
+      .suggestion-box {
+        background: #fffbe6;
+        border: 1px solid #ffe58f;
+        padding: 15px;
+        border-radius: 14px;
+        font-size: 13px;
+        line-height: 1.5;
+        cursor: pointer;
+      }
+      .suggestion-box:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 30px rgba(255, 229, 143, 0.4);
+        border-color: #fadb14;
+      }
+      .suggestion-box b {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: #856404;
+        border-bottom: 1px solid rgba(133, 100, 4, 0.1);
+        padding-bottom: 3px;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 12px;
+        margin-top: auto;
+        width: 100%;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 14px 0;
+        border-radius: 12px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .btn-dark {
+        background: var(--btn-dark);
+        color: white;
+      }
+      .btn-light {
+        background: var(--btn-light);
+        border: 1px solid #ddd;
+        color: #333;
+      }
+      .btn-purple {
+        background: var(--share-purple);
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        filter: brightness(1.1);
+      }
+      .btn-dark:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      }
+      .btn-light:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+      .btn-purple:hover {
+        box-shadow: 0 10px 20px rgba(142, 124, 195, 0.4);
+      }
+
+      /* 纸飞机图标样式 */
+      .icon-paperplane {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading-screen">
+      <div class="spinner"></div>
+      <div id="loading-text">正在请教饭局高人...</div>
+    </div>
+
+    <div id="report-card">
+      <div class="left-panel">
+        <div style="text-align: left; width: 100%">
+          <h1 style="margin: 0; font-size: 26px">局后复盘</h1>
+          <p style="color: var(--text-sub); font-size: 13px; margin-top: 4px">
+            在“家庭聚会”中的表现
+          </p>
+        </div>
+
+        <div class="medal-badge">隐藏：社交拆迁队</div>
+
+        <div style="width: 280px; height: 280px; margin: 10px 0">
+          <canvas id="radarChart"></canvas>
+        </div>
+
+        <div class="score-details">
+          <div class="score-item"><span>圆滑度</span><b>0</b></div>
+          <div class="score-item"><span>亲和力</span><b>5</b></div>
+          <div class="score-item"><span>逻辑性</span><b>10</b></div>
+          <div class="score-item"><span>幽默感</span><b>0</b></div>
+          <div class="score-item"><span>懂规矩</span><b>0</b></div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div
+          style="transition: var(--smooth-transition)"
+          onmouseover="this.style.transform = 'translateX(5px)'"
+          onmouseout="this.style.transform = 'none'"
+        >
+          <span style="font-size: 11px; color: #999; font-weight: bold"
+            >综合点评</span
+          >
+          <p
+            style="
+              font-size: 14px;
+              line-height: 1.6;
+              border-left: 4px solid var(--primary-accent);
+              padding-left: 15px;
+              margin-top: 8px;
+            "
+          >
+            你在这场局里简直是“社交自杀”的典范。面对长辈大伯的开场，你一句“去你的”不仅没规矩，还直接让场面瞬间冰冷。这已经不是不懂事，是当众拆台，这波操作直接让全家人都沉默了。
+          </p>
+        </div>
+
+        <div class="os-container">
+          <span style="font-size: 11px; color: #999; font-weight: bold"
+            >NPC 内心 OS</span
+          >
+          <div class="os-row">
+            <div class="npc-avatar">
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                alt="王庆祥"
+              />
+            </div>
+            <div class="os-bubble">
+              <b>王庆祥（家族大伯）：</b>
+              “这孩子，纯属缺心眼，连长幼尊卑都不分了。”
+            </div>
+          </div>
+          <div class="os-row">
+            <div class="npc-avatar">
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka"
+                alt="李建国"
+              />
+            </div>
+            <div class="os-bubble">
+              <b>李建国（二舅）：</b>
+              “脸都丢尽了，以后这种局绝对不能带他来。”
+            </div>
+          </div>
+          <div class="os-row">
+            <div class="npc-avatar">
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Buster"
+                alt="张志强"
+              />
+            </div>
+            <div class="os-bubble">
+              <b>张志强（同级表哥）：</b>
+              “牛逼啊兄弟，我憋了十年不敢说的话，你两秒钟就喷出来了。”
+            </div>
+          </div>
+        </div>
+
+        <div class="suggestion-box">
+          <b>💡 高情商建议</b>
+          你应该顺着大伯的话接：“大伯说得对，咱们家人难得聚齐，这第一杯酒必须敬长辈！”
+          即使真有不满，也要等酒过三巡私下再沟通。
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-dark" onclick="location.reload()">
+            ↺ 重新挑战
+          </button>
+          <button class="btn btn-light">🏠 返回菜单</button>
+          <button class="btn btn-purple">
+            <svg class="icon-paperplane" viewBox="0 0 24 24">
+              <path
+                d="M21.5,12.1L2,2l2.3,8.9l12.4,1.1l-12.4,1.2L2,22L21.5,12.1z"
+              ></path>
+            </svg>
+            分享战绩
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const loadingTexts = [
+        "正在复盘细节...",
+        "正在揣摩心思...",
+        "正在为你捏汗...",
+        "正在生成勋章...",
+      ];
+      let textIndex = 0;
+      setInterval(() => {
+        document.getElementById("loading-text").innerText =
+          loadingTexts[++textIndex % loadingTexts.length];
+      }, 800);
+
+      setTimeout(() => {
+        document.getElementById("loading-screen").style.display = "none";
+        document.getElementById("report-card").style.display = "flex";
+        initChart();
+      }, 3000);
+
+      function initChart() {
+        const ctx = document.getElementById("radarChart").getContext("2d");
+        new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: ["圆滑度", "亲和力", "逻辑性", "幽默感", "懂规矩"],
+            datasets: [
+              {
+                data: [0, 5, 10, 0, 0],
+                backgroundColor: "rgba(74, 93, 202, 0.2)",
+                borderColor: "rgba(74, 93, 202, 1)",
+                borderWidth: 2,
+                pointBackgroundColor: "rgba(74, 93, 202, 1)",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+              r: {
+                suggestedMin: 0,
+                suggestedMax: 100,
+                ticks: { display: false },
+                pointLabels: { font: { size: 11, weight: "bold" } },
+              },
+            },
+            plugins: { legend: { display: false } },
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
