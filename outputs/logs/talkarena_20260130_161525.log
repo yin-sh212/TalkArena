@@ -1,0 +1,27 @@
+2026-01-30 16:15:25,062 [INFO] Handlers 初始化模型...
+2026-01-30 16:15:25,063 [INFO] ============================================================
+2026-01-30 16:15:25,063 [INFO] TalkArena Orchestrator 初始化
+2026-01-30 16:15:25,063 [INFO] ============================================================
+2026-01-30 16:15:25,063 [INFO] 加载 LLM 模型...
+2026-01-30 16:15:25,672 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-30 16:15:25,674 [INFO] Retrying request to /chat/completions in 0.495585 seconds
+2026-01-30 16:15:25,798 [INFO] HTTP Request: GET https://api.gradio.app/gradio-messaging/en "HTTP/1.1 200 OK"
+2026-01-30 16:15:26,343 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-30 16:15:26,344 [INFO] Retrying request to /chat/completions in 0.935117 seconds
+2026-01-30 16:15:27,431 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-30 16:15:27,724 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-30 16:15:28,325 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-30 16:15:29,077 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-30 16:15:29,083 [INFO] 加载 TTS 模型...
+2026-01-30 16:15:29,162 [INFO] 加载 STT 模型...
+2026-01-30 16:15:29,428 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-30 16:15:29,428 [INFO] Handlers 模型初始化完成
+2026-01-30 16:15:29,566 [INFO] HTTP Request: GET http://localhost:7860/startup-events "HTTP/1.1 200 OK"
+2026-01-30 16:15:29,579 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 500 Internal Server Error"
+2026-01-30 16:15:29,820 [INFO] HTTP Request: GET https://checkip.amazonaws.com/ "HTTP/1.1 200 "
+2026-01-30 16:15:30,093 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 500 Internal Server Error"
+2026-01-30 16:15:30,281 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-01-30 16:15:30,605 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 500 Internal Server Error"
+2026-01-30 16:15:31,119 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 500 Internal Server Error"
+2026-01-30 16:15:31,626 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 500 Internal Server Error"
+2026-01-30 16:15:33,006 [INFO] HTTP Request: GET https://api.gradio.app/v2/tunnel-request "HTTP/1.1 200 OK"

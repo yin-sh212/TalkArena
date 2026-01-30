@@ -32,7 +32,7 @@ def create_ui():
     init_models()
     scenarios_data = get_scenarios()
 
-    with gr.Blocks(title="TalkArena") as demo:
+    with gr.Blocks(title="TalkArena", css=CUSTOM_CSS) as demo:
         session_id = gr.State("")
         current_scene = gr.State({"name": "", "sid": ""})
 
@@ -233,10 +233,29 @@ def create_ui():
                              visual_stage, aura_sidebar, critique_display, summary_display, end_btn, back_btn]
                 )
         
+        # 配置页场景选择事件
+        scene_descriptions = {
+            "家庭聚会": "家族聚餐，长辈当家，晚辈要有眼力见儿，敬酒规矩不能乱。",
+            "单位聚餐": "同事聚餐，领导在场，注意场合和分寸，别让气氛尴尬。",
+            "商务宴请": "高端局，主陪副陪分清，话权要巧妙抓住，让话题走在你的节奏。",
+            "同学聚会": "老同学见面，有炫耀有攀比，要拿捏好尺度，别显得太势利。",
+            "招待客户": "重要客户，以礼相待，既要显诚意又要有分寸，酒桌上谈生意。"
+        }
+
+        def update_scene(scene_name):
+            return scene_name, scene_descriptions.get(scene_name, "")
+
+        for i, card in enumerate(scene_cards):
+            scene_name = ["家庭聚会", "单位聚餐", "商务宴请", "同学聚会", "招待客户"][i]
+            card.click(
+                fn=lambda s=scene_name: update_scene(s),
+                outputs=[selected_scene, scene_desc]
+            )
+
         # 配置页返回场景选择
         def back_from_config():
             return gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
-        
+
         back_to_scenes.click(
             fn=back_from_config,
             outputs=[page_select, page_config, page_chat]
@@ -485,41 +504,46 @@ def create_ui():
             sid = scene.get("sid", "")
             if not sid:
                 return (
-                    gr.update(visible=False),
-                    gr.update(visible=True),
-                    gr.update(visible=False),
-                    "",
-                    {"name": "", "sid": ""},
-                    []
+                    gr.update(visible=False),  # page_select
+                    gr.update(visible=False),  # page_report
+                    gr.update(visible=True),   # page_chat
+                    gr.update(visible=False),  # page_config
+                    "",                        # session_id
+                    {"name": "", "sid": ""},   # current_scene
+                    [],                        # chatbot
+                    "",                        # visual_stage
+                    ""                         # aura_sidebar
                 )
-            
+
             # 重新开始游戏
             sess, hist, _, ai_d, user_d = start_session(sid)
             from ui.handlers import get_orchestrator
             orch = get_orchestrator()
             scene_cfg = orch.scenarios.get(sid, {})
             characters = scene_cfg.get("characters")
-            
+
             return (
-                gr.update(visible=False),  # 隐藏报告页
-                gr.update(visible=True),   # 显示对话页
-                gr.update(visible=False),  # 隐藏配置页
+                gr.update(visible=False),  # page_select 隐藏场景选择页
+                gr.update(visible=False),  # page_report 隐藏报告页
+                gr.update(visible=True),   # page_chat 显示对话页
+                gr.update(visible=False),  # page_config 隐藏配置页
                 sess,
                 scene,
                 hist,
                 render_visual_stage(characters, None, user_d, ai_d),
                 render_aura_sidebar(user_d, ai_d)
             )
-        
+
         def on_back_to_menu():
-            """返回菜单 - 返回配置页"""
+            """返回菜单 - 返回场景选择页"""
             return (
-                gr.update(visible=False),  # 隐藏报告页
-                gr.update(visible=False),  # 隐藏对话页
-                gr.update(visible=True),   # 显示配置页
-                "",
-                {"name": "", "sid": ""},
-                []
+                gr.update(visible=True),   # page_select 显示场景选择页
+                gr.update(visible=False),  # page_report 隐藏报告页
+                gr.update(visible=False),  # page_chat 隐藏对话页
+                gr.update(visible=False),  # page_config 隐藏配置页
+                "",                        # session_id
+                {"name": "", "sid": ""},   # current_scene
+                []                         # chatbot
             )
         
         def on_share():
@@ -530,12 +554,12 @@ def create_ui():
         retry_btn.click(
             fn=on_retry,
             inputs=[current_scene],
-            outputs=[page_report, page_chat, page_config, session_id, current_scene, chatbot, visual_stage, aura_sidebar]
+            outputs=[page_select, page_report, page_chat, page_config, session_id, current_scene, chatbot, visual_stage, aura_sidebar]
         )
-        
+
         menu_btn.click(
             fn=on_back_to_menu,
-            outputs=[page_report, page_chat, page_config, session_id, current_scene, chatbot]
+            outputs=[page_select, page_report, page_chat, page_config, session_id, current_scene, chatbot]
         )
         
         share_btn.click(
@@ -548,4 +572,4 @@ def create_ui():
 
 if __name__ == "__main__":
     demo = create_ui()
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=True, css=CUSTOM_CSS)
+    demo.launch(server_name="0.0.0.0", server_port=7860, share=False)
