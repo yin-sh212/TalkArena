@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import sys
 import os
+from orchestrator import Orchestrator
 
 # 添加项目根目录到 Python 路径
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -19,6 +20,9 @@ app = FastAPI(
     description="社交技能训练模拟器 API",
     version="2.0.0"
 )
+
+# 初始化全局编排器（加载模型）
+orchestrator = Orchestrator()
 
 # CORS 配置 - 允许前端跨域访问
 app.add_middleware(
@@ -34,11 +38,6 @@ app.include_router(scenarios.router, prefix="/api/scenarios", tags=["场景管�
 app.include_router(sessions.router, prefix="/api/sessions", tags=["会话管理"])
 app.include_router(chat.router, prefix="/api/chat", tags=["对话"])
 
-# 挂载前端静态文件 (在所有 API 路由之后)
-frontend_dist = os.path.join(project_root, "frontend", "dist")
-if os.path.exists(frontend_dist):
-    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
-
 @app.get("/api")
 async def root():
     return {
@@ -53,8 +52,22 @@ async def health_check():
 
 @app.get("/config")
 async def get_config():
-    # 返回一个空配置或基础状态，以消除前端或环境探测产生的 404 错误
-    return {"status": "ok", "message": "Configuration endpoint"}
+    """
+    返回系统配置和可用场景列表，供前端初始化 UI
+    """
+    return {
+        "status": "ok",
+        "scenarios": orchestrator.get_scenario_list(),
+        "features": {
+            "tts_enabled": orchestrator._tts_requested,
+            "stt_enabled": orchestrator.stt is not None
+        }
+    }
+
+# 挂载前端静态文件 (必须在所有 API 路由定义之后，否则会拦截根路径请求)
+frontend_dist = os.path.join(project_root, "frontend", "dist")
+if os.path.exists(frontend_dist):
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
 
 if __name__ == "__main__":
     import uvicorn
