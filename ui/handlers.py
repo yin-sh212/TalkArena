@@ -89,23 +89,47 @@ def start_session(scenario_id: str):
         # 检测是否为多角色
         is_user = name == session.user_name
 
-        # 提取角色头像和格式化消息 (如果是AI)
-        avatar = ""
-        if not is_user:
-            scenario = orch.scenarios.get(session.scenario_id, {})
-            chars = scenario.get("characters", [])
-            for c in chars:
-                if c['name'] == name:
-                    avatar = c.get('avatar', '')
-                    break
-
         # Gradio 6.2 字典格式
         if is_user:
             chat_history.append({"role": "user", "content": text})
         else:
-            title = f"{avatar} {name}" if avatar else name
-            formatted_text = f"**{title}**: {text}"
-            chat_history.append({"role": "assistant", "content": formatted_text})
+            scenario = orch.scenarios.get(session.scenario_id, {})
+            chars = scenario.get("characters", [])
+
+            # 检查文本是否已经包含角色名前缀（如 "大舅: xxx"）
+            text_has_character_name = any(
+                (c['name'] + ":" in text or c['name'] + "：" in text)
+                for c in chars
+            )
+
+            if text_has_character_name:
+                # 文本已包含角色名，直接解析
+                if ":" in text or "：" in text:
+                    sep = ":" if ":" in text else "："
+                    char_name, content = text.split(sep, 1)
+                    char_name = char_name.strip()
+
+                    # 查找角色头像
+                    avatar = ""
+                    for c in chars:
+                        if c['name'] == char_name:
+                            avatar = c.get('avatar', '')
+                            break
+
+                    title = f"{avatar} {char_name}" if avatar else char_name
+                    formatted_text = f"**{title}**: {content.strip()}"
+                    chat_history.append({"role": "assistant", "content": formatted_text})
+            else:
+                # 文本不包含角色名，使用name参数
+                avatar = ""
+                for c in chars:
+                    if c['name'] == name:
+                        avatar = c.get('avatar', '')
+                        break
+
+                title = f"{avatar} {name}" if avatar else name
+                formatted_text = f"**{title}**: {text}"
+                chat_history.append({"role": "assistant", "content": formatted_text})
 
     status = f"✓ 对局开始 | 场景: {orch.scenarios[scenario_id]['name']}"
 
@@ -202,14 +226,23 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
             responses = []
             scenario = orch.scenarios.get(session.scenario_id, {})
             characters = scenario.get("characters", [])
-            
-            if "\n" in ai_text and any(c['name'] + ":" in ai_text or c['name'] + "：" in ai_text for c in characters):
-                lines = ai_text.split('\n')
+
+            # 检查是否有角色名称出现（支持单行或多行）
+            has_character_name = any(c['name'] + ":" in ai_text or c['name'] + "：" in ai_text for c in characters)
+
+            if has_character_name:
+                lines = ai_text.split('\n') if '\n' in ai_text else [ai_text]
                 for line in lines:
                     if ":" in line or "：" in line:
                         sep = ":" if ":" in line else "："
                         name, text = line.split(sep, 1)
                         name_stripped = name.strip()
+
+                        # 只接受配置的角色
+                        valid_character_names = [c['name'] for c in characters]
+                        if name_stripped not in valid_character_names:
+                            continue
+
                         # 查找角色头像
                         avatar = ""
                         for c in characters:
@@ -223,8 +256,8 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
                         if line.strip():
                             responses.append({"role": "assistant", "content": line.strip()})
             else:
+                # 没有角色名称的情况（单角色场景）
                 ai_name = session.ai_name
-                # 如果是单角色但配置了头像
                 avatar = ""
                 if not characters and "avatar" in scenario:
                     avatar = scenario["avatar"]
