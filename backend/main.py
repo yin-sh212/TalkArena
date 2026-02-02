@@ -50,6 +50,7 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
 @app.get("/config")
 async def get_config():
     # 返回一个空配置或基础状态，以消除前端或环境探测产生的 404 错误
