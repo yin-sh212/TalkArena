@@ -194,7 +194,7 @@ def create_ui():
         # ========== Page 4: 复盘报告页 ==========
         with gr.Column(visible=False, elem_classes="report-page") as page_report:
             report_html = gr.HTML("", elem_id="game-report")
-            
+
             with gr.Row(elem_classes="report-buttons"):
                 retry_btn = gr.Button("🔄 重新挑战", elem_classes="btn-dark")
                 menu_btn = gr.Button("🏠 返回菜单", elem_classes="btn-light")
@@ -613,7 +613,9 @@ def create_ui():
                     
             # 获取场景信息
             scene_name = scene.get("name", "山东人的饭桌")
-            characters = scene.get("characters", [])
+            scenario_id = scene.get("sid", "")
+            scenario_config = orch.scenarios.get(scenario_id, {})
+            characters = scenario_config.get("characters", [])
             npc_list = [{"name": c.get("name", "NPC"), "avatar": c.get("avatar", "👤")} for c in characters]
                     
             # 生成报告
@@ -745,6 +747,9 @@ def create_ui():
                 if sess in orch.sessions:
                     # 使用与handle_end相同的方式生成报告
                     scene_name = scene.get("name", "山东人的饭桌")
+                    scenario_id = scene.get("sid", "")
+                    scenario_config = orch.scenarios.get(scenario_id, {})
+                    characters = scenario_config.get("characters", [])
                     npc_list = [{"name": c.get("name", "NPC"), "avatar": c.get("avatar", "👤")} for c in characters]
 
                     try:
@@ -855,6 +860,9 @@ def create_ui():
                 if sess in orch.sessions:
                     # 使用与handle_end相同的方式生成报告
                     scene_name = scene.get("name", "山东人的饭桌")
+                    scenario_id = scene.get("sid", "")
+                    scenario_config = orch.scenarios.get(scenario_id, {})
+                    characters = scenario_config.get("characters", [])
                     npc_list = [{"name": c.get("name", "NPC"), "avatar": c.get("avatar", "👤")} for c in characters]
 
                     try:
@@ -950,6 +958,8 @@ def create_ui():
 
         def on_back_to_menu():
             """返回菜单 - 返回场景选择页"""
+            import logging
+            logging.info("[DEBUG] 返回菜单按钮被点击")
             return (
                 gr.update(visible=True),   # page_select 显示场景选择页
                 gr.update(visible=False),  # page_report 隐藏报告页
@@ -973,7 +983,8 @@ def create_ui():
 
         menu_btn.click(
             fn=on_back_to_menu,
-            outputs=[page_select, page_report, page_chat, page_config, session_id, current_scene, chatbot]
+            outputs=[page_select, page_report, page_chat, page_config, session_id, current_scene, chatbot],
+            js="() => { setTimeout(() => window.location.reload(), 200); }"
         )
         
         share_btn.click(

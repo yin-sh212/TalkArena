@@ -53,16 +53,18 @@ body, html {
     inset: 0;
     width: 100vw;
     height: 100vh;
-    display: none;
     z-index: 1;
     border: none;
+    display: flex;
+    flex-direction: column;
 }
 
-.scene-select-page:not([style*="display: none"]),
-.config-page:not([style*="display: none"]),
-.chat-page:not([style*="display: none"]),
-.report-page:not([style*="display: none"]) {
-    display: flex !important;
+/* 处理Gradio的hidden attribute */
+.scene-select-page[hidden],
+.config-page[hidden],
+.chat-page[hidden],
+.report-page[hidden] {
+    display: none !important;
 }
 
 /* ====================================
