@@ -196,9 +196,11 @@ def create_ui():
             report_html = gr.HTML("", elem_id="game-report")
 
             with gr.Row(elem_classes="report-buttons"):
-                retry_btn = gr.Button("🔄 重新挑战", elem_classes="btn-dark")
                 menu_btn = gr.Button("🏠 返回菜单", elem_classes="btn-light")
                 share_btn = gr.Button("📤 分享成绩", elem_classes="btn-purple")
+
+            # 下载文件组件
+            download_file = gr.File(label="📥 点击下载报告", visible=True, elem_classes="download-file")
         
         # ========== 事件处理 ==========
 
@@ -921,40 +923,6 @@ def create_ui():
         )
         
         # ========== 报告页按钮事件 ==========
-        def on_retry(scene):
-            """重新挑战 - 重启当前场景"""
-            sid = scene.get("sid", "")
-            if not sid:
-                return (
-                    gr.update(visible=False),  # page_select
-                    gr.update(visible=False),  # page_report
-                    gr.update(visible=True),   # page_chat
-                    gr.update(visible=False),  # page_config
-                    "",                        # session_id
-                    {"name": "", "sid": ""},   # current_scene
-                    [],                        # chatbot
-                    "",                        # visual_stage
-                    ""                         # aura_sidebar
-                )
-
-            # 重新开始游戏
-            sess, hist, _, ai_d, user_d = start_session(sid)
-            from ui.handlers import get_orchestrator
-            orch = get_orchestrator()
-            scene_cfg = orch.scenarios.get(sid, {})
-            characters = scene_cfg.get("characters")
-
-            return (
-                gr.update(visible=False),  # page_select 隐藏场景选择页
-                gr.update(visible=False),  # page_report 隐藏报告页
-                gr.update(visible=True),   # page_chat 显示对话页
-                gr.update(visible=False),  # page_config 隐藏配置页
-                sess,
-                scene,
-                hist,
-                render_visual_stage(characters, None, user_d, ai_d),
-                render_aura_sidebar(user_d, ai_d)
-            )
 
         def on_back_to_menu():
             """返回菜单 - 返回场景选择页"""
@@ -970,17 +938,58 @@ def create_ui():
                 []                         # chatbot
             )
         
-        def on_share():
-            """分享成绩 - 生成分享图片"""
-            # TODO: 实现截图分享功能
-            return gr.update()
-        
-        retry_btn.click(
-            fn=on_retry,
-            inputs=[current_scene],
-            outputs=[page_select, page_report, page_chat, page_config, session_id, current_scene, chatbot, visual_stage, aura_sidebar]
-        )
+        def on_share(sess, scene):
+            """分享成绩 - 保存报告为HTML文件"""
+            import logging
+            import os
+            from datetime import datetime
 
+            if not sess:
+                logging.warning("[分享] 无有效session")
+                return gr.update(value=None)
+
+            try:
+                from ui.handlers import get_orchestrator
+                orch = get_orchestrator()
+
+                # 生成报告数据
+                scenario_id = scene.get("sid", "")
+                scenario_config = orch.scenarios.get(scenario_id, {})
+                scene_name = scene.get("name", "TalkArena")
+                characters = scenario_config.get("characters", [])
+                npc_list = [{"name": c.get("name", "NPC"), "avatar": c.get("avatar", "👤")} for c in characters]
+
+                report_data = orch.generate_game_report(sess, scene_name, npc_list)
+
+                # 渲染HTML
+                from ui.report import render_report_card
+                report_html_content = render_report_card(
+                    scene_name=report_data["scene_name"],
+                    medal=report_data["medal"],
+                    scores=report_data["scores"],
+                    summary=report_data["summary"],
+                    npc_os_list=report_data["npc_os_list"],
+                    suggestion=report_data["suggestion"]
+                )
+
+                # 保存为文件
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_dir = "outputs/reports"
+                os.makedirs(output_dir, exist_ok=True)
+                file_path = os.path.abspath(f"{output_dir}/report_{timestamp}.html")
+
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(report_html_content)
+
+                logging.info(f"[分享] 报告已保存: {file_path}")
+                return gr.update(value=file_path)
+
+            except Exception as e:
+                import traceback
+                logging.error(f"[分享] 生成报告失败: {e}")
+                logging.error(traceback.format_exc())
+                return gr.update(value=None)
+        
         menu_btn.click(
             fn=on_back_to_menu,
             outputs=[page_select, page_report, page_chat, page_config, session_id, current_scene, chatbot],
@@ -989,7 +998,8 @@ def create_ui():
         
         share_btn.click(
             fn=on_share,
-            outputs=[]
+            inputs=[session_id, current_scene],
+            outputs=[download_file]
         )
 
     return demo
