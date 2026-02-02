@@ -536,10 +536,15 @@ def create_ui():
 
         def handle_rescue_ui(sess, scene, history):
             """救场按钮 - 生成高情商回复建议填入输入框"""
+            import logging
+            logging.info(f"[DEBUG] 救场按钮被点击: sess={sess}, scene={scene}")
+
             if not sess:
+                logging.warning(f"[DEBUG] session_id为空，无法救场")
                 return (history, "❌ 请先开始对决", "", "", "", None, "")
-            
-            characters = scene.get("characters")
+
+            characters = scene.get("characters") if scene else []
+            logging.info(f"[DEBUG] 开始调用handle_rescue，characters={[c['name'] if isinstance(c, dict) else c for c in characters]}")
             chat_result, status, ai_d, user_d, audio, suggestion = handle_rescue(sess, history, "")
             
             return (
