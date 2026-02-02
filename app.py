@@ -51,6 +51,7 @@ def create_ui():
     with gr.Blocks(title="TalkArena") as demo:
         session_id = gr.State("")
         current_scene = gr.State({"name": "", "sid": ""})
+        mic_visible = gr.State(False)
 
         # ========== Page 1: 场景选择页 ==========
         with gr.Column(visible=True, elem_classes="scene-select-page") as page_select:
@@ -529,10 +530,11 @@ def create_ui():
                      visual_stage, aura_sidebar, critique_display, summary_display, end_btn, back_btn]
         )
 
-        def toggle_mic(visible):
-            return gr.update(visible=not visible)
+        def toggle_mic(is_visible):
+            new_visible = not is_visible
+            return gr.update(visible=new_visible), new_visible
 
-        mic_toggle.click(fn=toggle_mic, inputs=[mic_box], outputs=[mic_box])
+        mic_toggle.click(fn=toggle_mic, inputs=[mic_visible], outputs=[mic_box, mic_visible])
 
         def handle_rescue_ui(sess, scene, history):
             """救场按钮 - 生成高情商回复建议填入输入框"""
