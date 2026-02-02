@@ -1,43 +1,44 @@
-# 模型文件
-*.safetensors
-*.zip
-*.pt
-
-# Python 缓存
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+.Python
 
-# 日志文件
-*.log
-logs/
-backend/outputs/logs/
-outputs/logs/
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
 
-# 音频文件
-*.mp3
-*.wav
-
-# 系统文件
-.DS_Store
-.AppleDouble
-.LSOverride
-Thumbs.db
-
-# IDE
+# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# 环境变量
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Project specific
+outputs/logs/*.log
+outputs/audio/*/
+*.log
+
+# Models
+*.safetensors
+*.zip
+*.pt
+models/vosk-model-*/
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+
+# Environment variables
 .env
 .env.local
-
-# 前端构建产物
-# frontend/dist/  # ModelScope 部署需要这个目录，所以不要忽略
-frontend/node_modules/.vite/
-
-# Vosk 模型（如果太大）
-backend/models/vosk-model-*/
