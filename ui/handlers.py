@@ -140,32 +140,39 @@ def process_voice_input(session_id: str, audio_file, chat_history: List) -> Gene
     
     if not session_id:
         logger.warning("[语音输入] 无session")
-        yield chat_history, "", 50, 50, None
+        yield chat_history, "", 50, 50, None, False
         return
 
     if audio_file is None:
         logger.warning("[语音输入] 音频文件为None")
-        yield chat_history, "", 50, 50, None
+        yield chat_history, "", 50, 50, None, False
         return
-    
+
     orch = get_orchestrator()
-    
+
     user_text = orch.transcribe_audio(audio_file)
     logger.info(f"[语音输入] 转录成功: {user_text}")
-    
+
     if not user_text.strip():
         logger.warning("[语音输入] 转录结果为空")
-        yield chat_history, "", 50, 50, None
+        yield chat_history, "", 50, 50, None, False
         return
     
     yield from send_message(session_id, user_text, chat_history)
 
 def send_message(session_id: str, user_input: str, chat_history: List) -> Generator:
     if not session_id or not user_input.strip():
-        yield chat_history, "", 50, 50, None
+        yield chat_history, "", 50, 50, None, False
         return
 
     orch = get_orchestrator()
+
+    # 检查session是否存在（可能已结束）
+    if session_id not in orch.sessions:
+        logger.warning(f"[发送消息] Session {session_id} 不存在或已结束")
+        yield chat_history, "", 50, 50, None, False
+        return
+
     session = orch.sessions[session_id]
 
     # 将 Gradio 3.x 格式转换回内部字典格式进行处理
@@ -201,7 +208,7 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
         user_dom = update["user_dominance"]
         
         if stage == "user_sent":
-            yield chat_history, "", ai_dom, user_dom, None
+            yield chat_history, "", ai_dom, user_dom, None, False
 
         elif stage == "ai_thinking":
             model_name = update.get("model_name", "")
@@ -209,17 +216,19 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
             if not thinking_msg_added:
                 chat_history.append({"role": "assistant", "content": f"🤔 **正在思考...** (模型: {model_name})"})
                 thinking_msg_added = True
-            yield chat_history, "", ai_dom, user_dom, None
+            yield chat_history, "", ai_dom, user_dom, None, False
 
         elif stage == "ai_responded":
-            yield chat_history, "", ai_dom, user_dom, None
+            yield chat_history, "", ai_dom, user_dom, None, False
 
         elif stage == "complete":
             ai_text = update["ai_text"]
             audio_path = update["audio_path"]
             judgment = update.get("judgment", "")
             shift = update.get("dominance_shift", 0)
-            
+            game_over = update.get("game_over", False)
+            game_result = update.get("game_result", None)
+
             shift_str = f"+{shift}" if shift > 0 else str(shift)
             
             # 处理多角色解析
@@ -286,7 +295,7 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
                 responses[0]["content"] += f"\n\n---\n_📊 {judgment} (气场{shift_str}) | ⚙️ {model_name} {think_time}_"
                 chat_history.append(responses[0])
 
-            yield chat_history, "", ai_dom, user_dom, audio_path
+            yield chat_history, "", ai_dom, user_dom, audio_path, game_over
 
 def handle_rescue(session_id: str, chat_history: List, txt_input: str) -> Tuple:
     """处理救场请求 - 生成高情商回复供用户参考"""

@@ -675,18 +675,20 @@ def create_ui():
 
         def handle_msg(sess, scene, text, history):
             if not sess:
-                return history, "", "", "", None
+                return history, "", "", "", None, gr.update(), gr.update(), ""
             user = get_current_user()
             theme_color = scene.get("theme_color", "#4A90E2")
             characters = scene.get("characters")
-            for chat, _, ai_dom, user_dom, audio in send_message(sess, text, history):
+            game_over_detected = False
+            for chat, _, ai_dom, user_dom, audio, game_over in send_message(sess, text, history):
+                game_over_detected = game_over
                 # 尝试解析当前讲话者
-                last_msg = chat[-1]["content"] if chat else ""
-                last_title = chat[-1].get("metadata", {}).get("title", "")
-                
+                last_msg = chat[-1]["content"] if chat and len(chat) > 0 else ""
+                last_title = chat[-1].get("metadata", {}).get("title", "") if chat and len(chat) > 0 and chat[-1] else ""
+
                 # 去除头像前缀
                 speaker = last_title.split(' ')[-1] if ' ' in last_title else last_title
-                
+
                 # 获取最后一次判定的点评内容（如果有）
                 judgment = "对局中"
                 if "📊" in last_msg:
@@ -699,20 +701,105 @@ def create_ui():
                     render_visual_stage(characters, speaker, user_dom, ai_dom),
                     render_aura_sidebar(user_dom, ai_dom),
                     render_critique_box(judgment),
-                    audio
+                    audio,
+                    gr.update(),
+                    gr.update(),
+                    ""
                 )
+
+                # 检测到游戏结束后立即break，然后处理
+                if game_over:
+                    break
+
+            # 游戏结束时自动触发结束对局
+            if game_over_detected:
+                import time
+                time.sleep(2)  # 短暂延迟让用户看到最后的气场变化
+
+                # 显示加载界面
+                loading_html = '''
+                <div style="width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #2c313c; color: white;">
+                    <div style="width: 60px; height: 60px; border: 6px solid rgba(255,255,255,0.1); border-top: 6px solid #4a5dca; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 24px;"></div>
+                    <div style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">🎯 游戏结束</div>
+                    <div style="font-size: 16px; color: #a0aec0;">正在生成复盘报告...</div>
+                    <style>
+                        @keyframes spin { 100% { transform: rotate(360deg); } }
+                    </style>
+                </div>
+                '''
+
+                yield (
+                    chat, "",
+                    render_visual_stage(characters, speaker, user_dom, ai_dom),
+                    render_aura_sidebar(user_dom, ai_dom),
+                    render_critique_box(judgment),
+                    audio,
+                    gr.update(visible=False),  # 隐藏对话页
+                    gr.update(visible=True),   # 显示报告页
+                    loading_html
+                )
+
+                from ui.handlers import get_orchestrator
+                orch = get_orchestrator()
+
+                if sess in orch.sessions:
+                    # 使用与handle_end相同的方式生成报告
+                    scene_name = scene.get("name", "山东人的饭桌")
+                    npc_list = [{"name": c.get("name", "NPC"), "avatar": c.get("avatar", "👤")} for c in characters]
+
+                    try:
+                        report_data = orch.generate_game_report(sess, scene_name, npc_list)
+
+                        # 渲染HTML
+                        from ui.report import render_report_card
+                        report_html_content = render_report_card(
+                            scene_name=report_data["scene_name"],
+                            medal=report_data["medal"],
+                            scores=report_data["scores"],
+                            summary=report_data["summary"],
+                            npc_os_list=report_data["npc_os_list"],
+                            suggestion=report_data["suggestion"]
+                        )
+
+                        yield (
+                            chat, "",
+                            render_visual_stage(characters, speaker, user_dom, ai_dom),
+                            render_aura_sidebar(user_dom, ai_dom),
+                            render_critique_box(judgment),
+                            audio,
+                            gr.update(visible=False),  # 隐藏对话页
+                            gr.update(visible=True),   # 显示报告页
+                            report_html_content
+                        )
+                    except Exception as e:
+                        import traceback
+                        logger.error(f"[自动结束] 生成报告失败: {e}")
+                        logger.error(traceback.format_exc())
+                        # 发生错误时保持在对话页面
+                        yield (
+                            chat, "",
+                            render_visual_stage(characters, speaker, user_dom, ai_dom),
+                            render_aura_sidebar(user_dom, ai_dom),
+                            render_critique_box(judgment),
+                            audio,
+                            gr.update(),
+                            gr.update(),
+                            ""
+                        )
 
         def handle_voice(sess, scene, audio_path, history):
             if not sess or not audio_path:
-                return history, "", "", "", "", None
+                return history, "", "", "", "", None, gr.update(), gr.update(), ""
             user = get_current_user()
             theme_color = scene.get("theme_color", "#4A90E2")
             characters = scene.get("characters")
-            for chat, _, ai_dom, user_dom, audio in process_voice_input(sess, audio_path, history):
-                last_title = chat[-1].get("metadata", {}).get("title", "")
+            game_over_detected = False
+            for chat, _, ai_dom, user_dom, audio, game_over in process_voice_input(sess, audio_path, history):
+                game_over_detected = game_over
+                last_title = chat[-1].get("metadata", {}).get("title", "") if chat and len(chat) > 0 and chat[-1] else ""
                 speaker = last_title.split(' ')[-1] if ' ' in last_title else last_title
-                
-                last_msg = chat[-1]["content"]
+
+                last_msg = chat[-1]["content"] if chat and len(chat) > 0 else ""
                 judgment = "对局中"
                 if "📊" in last_msg:
                     parts = last_msg.split("📊")
@@ -724,23 +811,105 @@ def create_ui():
                     render_visual_stage(characters, speaker, user_dom, ai_dom),
                     render_aura_sidebar(user_dom, ai_dom),
                     render_critique_box(judgment),
-                    audio
+                    audio,
+                    gr.update(),
+                    gr.update(),
+                    ""
                 )
+
+                # 检测到游戏结束后立即break
+                if game_over:
+                    break
+
+            # 游戏结束时自动触发结束对局
+            if game_over_detected:
+                import time
+                time.sleep(0.5)
+
+                # 显示加载界面
+                loading_html = '''
+                <div style="width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #2c313c; color: white;">
+                    <div style="width: 60px; height: 60px; border: 6px solid rgba(255,255,255,0.1); border-top: 6px solid #4a5dca; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 24px;"></div>
+                    <div style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">🎯 游戏结束</div>
+                    <div style="font-size: 16px; color: #a0aec0;">正在生成复盘报告...</div>
+                    <style>
+                        @keyframes spin { 100% { transform: rotate(360deg); } }
+                    </style>
+                </div>
+                '''
+
+                yield (
+                    chat, "",
+                    render_visual_stage(characters, speaker, user_dom, ai_dom),
+                    render_aura_sidebar(user_dom, ai_dom),
+                    render_critique_box(judgment),
+                    audio,
+                    gr.update(visible=False),  # 隐藏对话页
+                    gr.update(visible=True),   # 显示报告页
+                    loading_html
+                )
+
+                from ui.handlers import get_orchestrator
+                orch = get_orchestrator()
+
+                if sess in orch.sessions:
+                    # 使用与handle_end相同的方式生成报告
+                    scene_name = scene.get("name", "山东人的饭桌")
+                    npc_list = [{"name": c.get("name", "NPC"), "avatar": c.get("avatar", "👤")} for c in characters]
+
+                    try:
+                        report_data = orch.generate_game_report(sess, scene_name, npc_list)
+
+                        # 渲染HTML
+                        from ui.report import render_report_card
+                        report_html_content = render_report_card(
+                            scene_name=report_data["scene_name"],
+                            medal=report_data["medal"],
+                            scores=report_data["scores"],
+                            summary=report_data["summary"],
+                            npc_os_list=report_data["npc_os_list"],
+                            suggestion=report_data["suggestion"]
+                        )
+
+                        yield (
+                            chat, "",
+                            render_visual_stage(characters, speaker, user_dom, ai_dom),
+                            render_aura_sidebar(user_dom, ai_dom),
+                            render_critique_box(judgment),
+                            audio,
+                            gr.update(visible=False),  # 隐藏对话页
+                            gr.update(visible=True),   # 显示报告页
+                            report_html_content
+                        )
+                    except Exception as e:
+                        import traceback
+                        logger.error(f"[自动结束-语音] 生成报告失败: {e}")
+                        logger.error(traceback.format_exc())
+                        yield (
+                            chat, "",
+                            render_visual_stage(characters, speaker, user_dom, ai_dom),
+                            render_aura_sidebar(user_dom, ai_dom),
+                            render_critique_box(judgment),
+                            audio,
+                            gr.update(),
+                            gr.update(),
+                            ""
+                        )
 
         txt.submit(
             fn=handle_msg,
             inputs=[session_id, current_scene, txt, chatbot],
-            outputs=[chatbot, txt, visual_stage, aura_sidebar, critique_display, audio_player]
+            outputs=[chatbot, txt, visual_stage, aura_sidebar, critique_display, audio_player, page_chat, page_report, report_html]
         )
         btn_send.click(
             fn=handle_msg,
             inputs=[session_id, current_scene, txt, chatbot],
-            outputs=[chatbot, txt, visual_stage, aura_sidebar, critique_display, audio_player]
+            outputs=[chatbot, txt, visual_stage, aura_sidebar, critique_display, audio_player, page_chat, page_report, report_html]
         )
         mic.change(
             fn=handle_voice,
             inputs=[session_id, current_scene, mic, chatbot],
-            outputs=[chatbot, txt, visual_stage, aura_sidebar, critique_display, audio_player]
+            outputs=[chatbot, txt, visual_stage, aura_sidebar, critique_display, audio_player, page_chat, page_report, report_html]
         )
         
         # ========== 报告页按钮事件 ==========

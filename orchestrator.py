@@ -429,11 +429,23 @@ class Orchestrator:
         
         old_user_dom = session.user_dominance
         session.user_dominance = max(5, min(95, session.user_dominance + dominance_shift))
-        
+
+        # 检查是否达到游戏结束条件
+        game_over = False
+        game_result = None
+        if session.user_dominance <= 5:
+            game_over = True
+            game_result = "ai_win"
+            logger.info(f"[游戏结束] AI气场达到95，用户失败！")
+        elif session.user_dominance >= 95:
+            game_over = True
+            game_result = "user_win"
+            logger.info(f"[游戏结束] 用户气场达到95，用户胜利！")
+
         logger.info(f"[裁判判定] 气场转移: {dominance_shift:+d}")
         logger.info(f"[裁判点评] {judgment}")
         logger.info(f"[气场结果] 用户 {old_user_dom} -> {session.user_dominance} | AI {100-old_user_dom} -> {session.ai_dominance}")
-        
+
         # === 生成语音 ===
         emotion = "angry" if dominance_shift < -5 else ("happy" if dominance_shift > 5 else "neutral")
         
@@ -463,6 +475,8 @@ class Orchestrator:
             "audio_path": audio_path,
             "judgment": judgment,
             "dominance_shift": dominance_shift,
+            "game_over": game_over,
+            "game_result": game_result,
             "log": f"回合结束 | 气场: 用户 {session.user_dominance} vs AI {session.ai_dominance}"
         }
     
