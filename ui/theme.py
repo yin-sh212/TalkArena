@@ -361,7 +361,7 @@ body, html {
     overflow: hidden !important;
 }
 
-/* AI消息气泡样式 - 山东饭局主题 */
+/* AI消息气泡样式 - 山东饭局主题，靠左显示 */
 .chat-box-container .message.bot,
 .chat-box-container [data-testid="bot"] {
     background: linear-gradient(135deg, #FFF9F0 0%, #FFEFD5 100%) !important;
@@ -370,9 +370,23 @@ body, html {
     margin: 10px 0 !important;
     border-radius: 12px !important;
     box-shadow: 0 2px 8px rgba(245, 166, 35, 0.1) !important;
+    max-width: 80% !important;
+    width: auto !important;
+    align-self: flex-start !important;
+    text-align: left !important;
 }
 
-/* 用户消息保持简洁 */
+/* 去掉AI消息内部嵌套元素的样式 */
+.chat-box-container .message.bot *,
+.chat-box-container [data-testid="bot"] * {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+/* 用户消息保持简洁，靠右显示 */
 .chat-box-container .message.user,
 .chat-box-container [data-testid="user"] {
     background: #E3F2FD !important;
@@ -380,6 +394,20 @@ body, html {
     padding: 14px 18px !important;
     margin: 10px 0 !important;
     border-radius: 12px !important;
+    max-width: 80% !important;
+    width: auto !important;
+    align-self: flex-end !important;
+    text-align: left !important;
+}
+
+/* 去掉用户消息内部嵌套元素的样式 */
+.chat-box-container .message.user *,
+.chat-box-container [data-testid="user"] * {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
 }
 
 /* 角色名称（emoji + 粗体名字）突出显示 */
@@ -399,7 +427,17 @@ body, html {
     line-height: 1.6 !important;
 }
 
-/* Gradio 6.x Chatbot 内部滚动穿透 */
+/* 去掉Gradio 6.2的嵌套wrapper样式 */
+.chat-box-container .message-wrap,
+.chat-box-container .message-row,
+.chat-box-container .message > div,
+.chat-box-container [data-testid="user"] > div,
+.chat-box-container [data-testid="bot"] > div {
+    all: unset !important;
+    display: contents !important;
+}
+
+/* Gradio 6.x Chatbot 内部滚动穿透，支持左右对齐 */
 .chat-box-container > div,
 .chat-box-container [role="log"],
 .chat-box-container .chatbot {
@@ -411,6 +449,7 @@ body, html {
     overflow-x: hidden !important;
     display: flex !important;
     flex-direction: column !important;
+    align-items: stretch !important;
 }
 
 /* 输入行 - 固定在底部 */

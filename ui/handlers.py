@@ -105,7 +105,7 @@ def start_session(scenario_id: str):
         else:
             title = f"{avatar} {name}" if avatar else name
             formatted_text = f"**{title}**: {text}"
-            chat_history.append({"role": "assistant", "content": formatted_text, "metadata": {"title": title}})
+            chat_history.append({"role": "assistant", "content": formatted_text})
 
     status = f"✓ 对局开始 | 场景: {orch.scenarios[scenario_id]['name']}"
 
@@ -216,7 +216,9 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
                             if c['name'] == name_stripped:
                                 avatar = c.get('avatar', '')
                                 break
-                        responses.append({"role": "assistant", "content": text.strip(), "metadata": {"title": f"{avatar} {name_stripped}" if avatar else name_stripped}})
+                        title = f"{avatar} {name_stripped}" if avatar else name_stripped
+                        formatted_content = f"**{title}**: {text.strip()}"
+                        responses.append({"role": "assistant", "content": formatted_content})
                     else:
                         if line.strip():
                             responses.append({"role": "assistant", "content": line.strip()})
@@ -228,20 +230,28 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
                     avatar = scenario["avatar"]
                 elif len(characters) == 1:
                     avatar = characters[0].get("avatar", "")
-                
-                responses.append({"role": "assistant", "content": ai_text, "metadata": {"title": f"{avatar} {ai_name}" if avatar else ai_name}})
+
+                title = f"{avatar} {ai_name}" if avatar else ai_name
+                formatted_content = f"**{title}**: {ai_text}"
+                responses.append({"role": "assistant", "content": formatted_content})
 
             # 替换思考消息
             if thinking_msg_added and chat_history and chat_history[-1].get("content", "").startswith("🤔"):
                 chat_history.pop()
-            
-            # 添加带判定的最后一条
-            for i, resp in enumerate(responses):
-                if i == len(responses) - 1:
-                    import time
-                    think_time = f"{time.time() - think_start:.1f}s" if think_start else ""
-                    resp["content"] += f"\n\n---\n_📊 {judgment} (气场{shift_str}) | ⚙️ {model_name} {think_time}_"
-                chat_history.append(resp)
+
+            # 合并多个角色的消息为一条，避免Gradio合并显示导致嵌套
+            import time
+            think_time = f"{time.time() - think_start:.1f}s" if think_start else ""
+
+            if len(responses) > 1:
+                # 多个角色：合并为一条消息
+                combined_content = "\n\n---\n\n".join([r["content"] for r in responses])
+                combined_content += f"\n\n---\n_📊 {judgment} (气场{shift_str}) | ⚙️ {model_name} {think_time}_"
+                chat_history.append({"role": "assistant", "content": combined_content})
+            elif len(responses) == 1:
+                # 单个角色：直接添加
+                responses[0]["content"] += f"\n\n---\n_📊 {judgment} (气场{shift_str}) | ⚙️ {model_name} {think_time}_"
+                chat_history.append(responses[0])
 
             yield chat_history, "", ai_dom, user_dom, audio_path
 

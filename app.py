@@ -162,7 +162,6 @@ def create_ui():
                         chatbot = gr.Chatbot(
                             show_label=False,
                             elem_classes="chat-box-container",
-                            avatar_images=(None, "https://api.dicebear.com/7.x/bottts/svg?seed=TalkArena"),
                             height=500
                         )
                                 
