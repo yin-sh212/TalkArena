@@ -65,20 +65,26 @@ def create_ui():
                 with gr.Column(scale=1):
                     for i, (display_name, sid) in enumerate(scenarios_data):
                         if i % 2 == 0:  # 左列
+                            is_active = (sid == "shandong_dinner")
                             cfg = SCENARIOS.get(sid, {"name": display_name, "desc": "开始挑战！"})
+                            btn_label = f"📋 {cfg['name']}" + ("" if is_active else " (建设中)")
                             btn = gr.Button(
-                                value=f"📋 {cfg['name']}\n{cfg['desc']}",
-                                elem_classes="scenario-card"
+                                value=f"{btn_label}\n{cfg['desc']}",
+                                elem_classes="scenario-card",
+                                interactive=is_active
                             )
                             scenario_buttons.append((btn, sid, cfg["name"], cfg["desc"]))
                 
                 with gr.Column(scale=1):
                     for i, (display_name, sid) in enumerate(scenarios_data):
                         if i % 2 == 1:  # 右列
+                            is_active = (sid == "shandong_dinner")
                             cfg = SCENARIOS.get(sid, {"name": display_name, "desc": "开始挑战！"})
+                            btn_label = f"📋 {cfg['name']}" + ("" if is_active else " (建设中)")
                             btn = gr.Button(
-                                value=f"📋 {cfg['name']}\n{cfg['desc']}",
-                                elem_classes="scenario-card"
+                                value=f"{btn_label}\n{cfg['desc']}",
+                                elem_classes="scenario-card",
+                                interactive=is_active
                             )
                             scenario_buttons.append((btn, sid, cfg["name"], cfg["desc"]))
 
