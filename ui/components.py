@@ -217,19 +217,17 @@ def render_visual_stage(characters: list = None, current_speaker: str = None, us
     
     ai_seats_html = ""
     for i, char in enumerate(characters):
-        is_center = i == 1
-        center_class = "center" if is_center else ""
         is_speaking = char['name'] == current_speaker
         speaking_indicator = '<div class="speaking-indicator">💬</div>' if is_speaking else ""
-        
+
         ai_seats_html += f'''
-        <div class="avatar-box {center_class}">
-            <div class="avatar-img" style="background: {'#E0E7FF' if is_center else '#FCD34D'};">
+        <div class="avatar-box">
+            <div class="avatar-img" style="background: #FCD34D;">
                 {char.get('avatar', '🤖')}
                 {speaking_indicator}
             </div>
-            <div class="role-badge" style="background: {'#5B6BF9' if is_center else '#333'};">{char['name']}</div>
-            <div class="role-desc">{char.get('bio', '')[:12]}...</div>
+            <div class="role-badge">{char['name']}</div>
+            <div class="role-desc">{char.get('bio', '')[:20]}...</div>
         </div>
         '''
 

@@ -79,12 +79,11 @@ def get_scenarios() -> List[Tuple[str, str]]:
 def start_session(scenario_id: str):
     if not scenario_id:
         return "", [], "❌ 请先选择场景", 50, 50
-    
+
     orch = get_orchestrator()
     session = orch.start_session(scenario_id)
-    
+
     chat_history = []
-    current_user_msg = None
 
     for name, text in session.chat_history:
         # 检测是否为多角色
@@ -100,23 +99,16 @@ def start_session(scenario_id: str):
                     avatar = c.get('avatar', '')
                     break
 
-        # 格式化消息内容（在消息前加上说话者名称）
+        # Gradio 6.2 字典格式
         if is_user:
-            formatted_text = text
-            current_user_msg = formatted_text
+            chat_history.append({"role": "user", "content": text})
         else:
             title = f"{avatar} {name}" if avatar else name
             formatted_text = f"**{title}**: {text}"
-            # Gradio 3.x 格式: [用户消息, AI回复]
-            if current_user_msg is not None:
-                chat_history.append([current_user_msg, formatted_text])
-                current_user_msg = None
-            else:
-                # AI 主动发言（开场白）
-                chat_history.append([None, formatted_text])
-    
+            chat_history.append({"role": "assistant", "content": formatted_text, "metadata": {"title": title}})
+
     status = f"✓ 对局开始 | 场景: {orch.scenarios[scenario_id]['name']}"
-    
+
     return session.session_id, chat_history, status, session.ai_dominance, session.user_dominance
 
 def process_voice_input(session_id: str, audio_file, chat_history: List) -> Generator:
@@ -124,12 +116,12 @@ def process_voice_input(session_id: str, audio_file, chat_history: List) -> Gene
     
     if not session_id:
         logger.warning("[语音输入] 无session")
-        yield (convert_chat_history_to_gradio3(chat_history) if isinstance(chat_history, list) and chat_history and isinstance(chat_history[0], dict) else chat_history), "", 50, 50, None
+        yield chat_history, "", 50, 50, None
         return
 
     if audio_file is None:
         logger.warning("[语音输入] 音频文件为None")
-        yield (convert_chat_history_to_gradio3(chat_history) if isinstance(chat_history, list) and chat_history and isinstance(chat_history[0], dict) else chat_history), "", 50, 50, None
+        yield chat_history, "", 50, 50, None
         return
     
     orch = get_orchestrator()
@@ -139,7 +131,7 @@ def process_voice_input(session_id: str, audio_file, chat_history: List) -> Gene
     
     if not user_text.strip():
         logger.warning("[语音输入] 转录结果为空")
-        yield (convert_chat_history_to_gradio3(chat_history) if isinstance(chat_history, list) and chat_history and isinstance(chat_history[0], dict) else chat_history), "", 50, 50, None
+        yield chat_history, "", 50, 50, None
         return
     
     yield from send_message(session_id, user_text, chat_history)
@@ -185,7 +177,7 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
         user_dom = update["user_dominance"]
         
         if stage == "user_sent":
-            yield convert_chat_history_to_gradio3(chat_history), "", ai_dom, user_dom, None
+            yield chat_history, "", ai_dom, user_dom, None
 
         elif stage == "ai_thinking":
             model_name = update.get("model_name", "")
@@ -193,10 +185,10 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
             if not thinking_msg_added:
                 chat_history.append({"role": "assistant", "content": f"🤔 **正在思考...** (模型: {model_name})"})
                 thinking_msg_added = True
-            yield convert_chat_history_to_gradio3(chat_history), "", ai_dom, user_dom, None
+            yield chat_history, "", ai_dom, user_dom, None
 
         elif stage == "ai_responded":
-            yield convert_chat_history_to_gradio3(chat_history), "", ai_dom, user_dom, None
+            yield chat_history, "", ai_dom, user_dom, None
 
         elif stage == "complete":
             ai_text = update["ai_text"]
@@ -251,7 +243,7 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
                     resp["content"] += f"\n\n---\n_📊 {judgment} (气场{shift_str}) | ⚙️ {model_name} {think_time}_"
                 chat_history.append(resp)
 
-            yield convert_chat_history_to_gradio3(chat_history), "", ai_dom, user_dom, audio_path
+            yield chat_history, "", ai_dom, user_dom, audio_path
 
 def handle_rescue(session_id: str, chat_history: List, txt_input: str) -> Tuple:
     """处理救场请求 - 生成高情商回复供用户参考"""

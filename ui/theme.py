@@ -1,9 +1,11 @@
 """
-TalkArena 主题样式 - 简化版
+TalkArena 主题样式 - 优化版
 """
 
 CUSTOM_CSS = """
-/* Gradio 6.2 适配 - 完全重置 */
+/* ====================================
+   基础重置（必须使用 !important 覆盖 Gradio）
+   ==================================== */
 * {
     box-sizing: border-box;
 }
@@ -16,11 +18,11 @@ body, html {
     overflow: hidden;
 }
 
+/* Gradio 根容器重置 */
 #root, #app, .gradio-app {
     width: 100% !important;
     height: 100vh !important;
     overflow: hidden !important;
-    position: relative !important;
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -32,25 +34,30 @@ body, html {
     padding: 0 !important;
     margin: 0 !important;
     overflow: hidden !important;
+    border: none !important;
 }
 
-/* 所有页面容器默认隐藏 */
+.gradio-container > div,
+[data-testid="column"] {
+    border: none;
+}
+
+/* ====================================
+   页面布局系统
+   ==================================== */
 .scene-select-page,
 .config-page,
 .chat-page,
 .report-page {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    display: none !important;
-    z-index: 1 !important;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    z-index: 1;
+    border: none;
 }
 
-/* 只显示 visible的页面 */
 .scene-select-page:not([style*="display: none"]),
 .config-page:not([style*="display: none"]),
 .chat-page:not([style*="display: none"]),
@@ -58,26 +65,212 @@ body, html {
     display: flex !important;
 }
 
-/* Page 1: 场景选择页 */
+/* ====================================
+   场景选择页
+   ==================================== */
 .scene-select-page {
-    flex-direction: column !important;
-    background: #E6F0FF !important;
-    overflow-y: auto !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-    padding: 60px 40px !important;
+    flex-direction: column;
+    background: #E6F0FF;
+    overflow-y: auto;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 60px 40px;
 }
 
 .scenario-grid {
-    width: 100% !important;
-    max-width: 1200px !important;
-    margin: 20px 0 !important;
-    gap: 20px !important;
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px 0;
+    gap: 20px;
 }
 
+/* ====================================
+   配置页
+   ==================================== */
+.config-page {
+    flex-direction: column;
+    background: linear-gradient(135deg, #FFF9F0 0%, #FFE8CC 100%);
+    padding: 40px 60px;
+    overflow-y: auto;
+}
 
+.config-page > * {
+    border: none;
+}
 
-/* Page 3: 对话页 */
+.config-page-title {
+    font-size: 36px;
+    font-weight: 900;
+    color: #D48806;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.config-page-subtitle {
+    font-size: 18px;
+    color: #8C6D3D;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin: 30px 0 15px;
+}
+
+.ai-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin-left: 10px;
+    font-weight: normal;
+}
+
+/* 场景卡片行 */
+.scenario-cards-row {
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* 场景卡片 */
+.scene-card {
+    flex: 1;
+    min-width: 150px;
+    padding: 20px 15px;
+    background: white;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.scene-card:hover {
+    border-color: #F5A623;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 166, 35, 0.15);
+}
+
+.scene-card-selected {
+    border-color: #F5A623;
+    border-width: 2px;
+    background: #FFF8E1;
+    box-shadow: 0 4px 12px rgba(245, 166, 35, 0.2);
+}
+
+/* 场景描述 */
+.scene-desc-container {
+    margin: 20px 0 40px 0;
+    padding: 0;
+}
+
+.scene-desc-container textarea {
+    min-height: 65px;
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #555;
+}
+
+.scene-desc-container label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+/* 成员卡片行 */
+.roster-row {
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* 成员卡片 */
+.roster-card {
+    flex: 1;
+    min-width: 200px;
+    padding: 20px;
+    background: white;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: pre-line;
+    text-align: center;
+}
+
+.roster-card:hover {
+    border-color: #F5A623;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.roster-card-selected {
+    border-color: #F5A623;
+    border-width: 2px;
+    background: #FFF8E1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* 按钮 */
+.secondary-btn {
+    padding: 10px 24px;
+    background: white;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+    border-color: #999;
+    color: #333;
+}
+
+.start-game-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #F5A623 0%, #E87E04 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 20px 0;
+}
+
+.start-game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(245, 166, 35, 0.4);
+}
+
+.back-link-btn {
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* ====================================
+   对话页
+   ==================================== */
 .chat-page {
     flex-direction: column !important;
     background: #F8FAFC !important;
@@ -168,6 +361,44 @@ body, html {
     overflow: hidden !important;
 }
 
+/* AI消息气泡样式 - 山东饭局主题 */
+.chat-box-container .message.bot,
+.chat-box-container [data-testid="bot"] {
+    background: linear-gradient(135deg, #FFF9F0 0%, #FFEFD5 100%) !important;
+    border-left: 4px solid #F5A623 !important;
+    padding: 14px 18px !important;
+    margin: 10px 0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(245, 166, 35, 0.1) !important;
+}
+
+/* 用户消息保持简洁 */
+.chat-box-container .message.user,
+.chat-box-container [data-testid="user"] {
+    background: #E3F2FD !important;
+    border-left: 4px solid #2196F3 !important;
+    padding: 14px 18px !important;
+    margin: 10px 0 !important;
+    border-radius: 12px !important;
+}
+
+/* 角色名称（emoji + 粗体名字）突出显示 */
+.chat-box-container .message strong,
+.chat-box-container [data-testid="bot"] strong {
+    color: #D48806 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    display: inline-block !important;
+    margin-bottom: 8px !important;
+}
+
+/* emoji 头像稍大 */
+.chat-box-container .message.bot p:first-child,
+.chat-box-container [data-testid="bot"] p:first-child {
+    font-size: 18px !important;
+    line-height: 1.6 !important;
+}
+
 /* Gradio 6.x Chatbot 内部滚动穿透 */
 .chat-box-container > div,
 .chat-box-container [role="log"],
@@ -227,51 +458,19 @@ body, html {
     margin-left: 10px !important;
 }
 
-/* 品牌标题 */
-.brand-title {
-    color: #1a237e;
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 4px;
-}
-
-.brand-subtitle {
-    color: #1a237e;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 24px;
-    opacity: 0.8;
-}
-
-/* 场景卡片 */
-.scenario-card {
-    background: #FFFFFF !important;
-    border-radius: 16px !important;
-    padding: 20px !important;
-    margin-bottom: 12px !important;
-    border: 2px solid transparent !important;
-    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.1) !important;
-    text-align: left !important;
-    white-space: pre-wrap !important;
-    min-height: 120px !important;
-    width: 100% !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    cursor: pointer !important;
-}
-
-.scenario-card:hover {
-    transform: translateY(-4px) !important;
-    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%) !important;
-    border-color: #4A90E2 !important;
-    box-shadow: 0 8px 24px rgba(74, 144, 226, 0.2) !important;
-}
-
-.footer-action {
-    margin-top: 20px;
-    text-align: center;
-    color: #1a237e;
-    font-weight: bold;
-    font-size: 16px;
+/* 气场侧边栏 */
+.aura-sidebar {
+    width: 200px !important;
+    min-width: 200px !important;
+    max-width: 200px !important;
+    flex-shrink: 0 !important;
+    height: 100% !important;
+    background: white !important;
+    padding: 15px !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
 }
 
 /* 气场条 */
@@ -366,436 +565,291 @@ body, html {
 /* 舞台容器 */
 .stage-container {
     background: linear-gradient(180deg, #E6F0FF 0%, #FFFFFF 100%);
-    padding: 5px 0;
+    padding: 10px 20px;
     position: relative;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
     width: 100%;
     height: 100%;
     overflow: hidden;
 }
 
+/* 座位包装器 */
 .seat-wrapper {
     display: flex;
-    align-items: flex-end;
-    gap: 30px;
-    position: relative;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
     z-index: 2;
 }
 
+/* 角色头像卡片 */
 .avatar-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
+    gap: 6px;
+    transition: transform 0.3s ease;
 }
 
+.avatar-box:hover {
+    transform: translateY(-5px);
+}
+
+/* 中间主角色放大 */
+.avatar-box.center .avatar-img {
+    width: 70px;
+    height: 70px;
+    font-size: 36px;
+}
+
+.avatar-box.center .role-badge {
+    font-size: 15px;
+    padding: 6px 14px;
+}
+
+/* 头像图片 */
 .avatar-img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background-color: #ddd;
-    border: 2px solid white;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    transition: all 0.3s ease;
+    border: 3px solid white;
 }
 
-.avatar-box.center .avatar-img {
-    width: 65px;
-    height: 65px;
-    border-color: #5B6BF9;
-    font-size: 32px;
-}
-
+/* 说话指示器 */
 .speaking-indicator {
     position: absolute;
     top: -5px;
     right: -5px;
-    background: #5B6BF9;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 10px;
-    border: 2px solid white;
+    font-size: 16px;
     animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
+    0%, 100% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.2); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
 }
 
+/* 角色名称徽章 */
 .role-badge {
-    margin-top: -8px;
     background: #333;
     color: white;
-    font-size: 10px;
-    padding: 1px 8px;
-    border-radius: 10px;
-    z-index: 2;
-}
-
-.table-curve {
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    height: 50px;
-    background: white;
-    border-radius: 100% 100% 0 0 / 200% 200% 0 0;
-    z-index: 1;
-}
-
-/* 左上角分数板 */
-.score-board-left {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(4px);
-    border: 1px solid #E5E7EB;
+    padding: 4px 12px;
     border-radius: 12px;
-    padding: 10px 18px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    z-index: 3;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
 }
 
-.score-board-left .score-label-mini {
+/* 角色描述 */
+.role-desc {
     font-size: 11px;
     color: #666;
-    font-weight: bold;
+    text-align: center;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.score-board-left .score-val-large {
-    font-size: 32px;
-    font-weight: 900;
-    color: #D32F2F;
-    line-height: 1.1;
-}
-
-/* 右上角煎饼大蒜 */
-.score-board-right {
+/* 分数面板 - 左上角 */
+.score-board-left {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(4px);
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    padding: 8px 15px;
-    gap: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    z-index: 3;
-}
-
-.score-board-right .score-item-mini {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-}
-
-.score-board-right .score-val-mini {
-    font-size: 18px;
-    font-weight: 900;
-}
-
-.score-board-right .score-label-mini {
-    font-size: 10px;
-    color: #888;
-}
-
-.score-board-right .face { color: #D48806; }
-.score-board-right .gaffe { color: #722ED1; }
-
-/* 删除旧的浮动计分板样式引用 */
-.score-board-floating {
-    display: none !important;
-}
-
-/* Page 2: 配置页 */
-.config-page {
-    flex-direction: column !important;
-    background: linear-gradient(135deg, #FFF9F0 0%, #FFE8CC 100%) !important;
-    padding: 40px 60px !important;
-    overflow-y: auto !important;
-    box-sizing: border-box !important;
-}
-
-/* Page 4: 复盘报告页 */
-.report-page {
-    flex-direction: column !important;
-    background: #2c313c !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-}
-
-.report-buttons {
-    position: fixed !important;
-    bottom: 30px !important;
-    right: 30px !important;
-    display: flex !important;
-    gap: 12px !important;
-    z-index: 1000 !important;
-}
-
-.btn-dark {
-    background: #1a1a1a !important;
-    color: white !important;
-    padding: 14px 24px !important;
-    border-radius: 12px !important;
-    border: none !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
-}
-
-.btn-dark:hover {
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3) !important;
-    filter: brightness(1.1) !important;
-}
-
-.btn-light {
-    background: white !important;
-    color: #333 !important;
-    padding: 14px 24px !important;
-    border-radius: 12px !important;
-    border: 1px solid #ddd !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
-}
-
-.btn-light:hover {
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-}
-
-.btn-purple {
-    background: #8e7cc3 !important;
-    color: white !important;
-    padding: 14px 24px !important;
-    border-radius: 12px !important;
-    border: none !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
-}
-
-.btn-purple:hover {
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 10px 20px rgba(142, 124, 195, 0.4) !important;
-    filter: brightness(1.1) !important;
-}
-
-.config-page-title {
-    font-size: 36px;
-    font-weight: 900;
-    color: #D48806;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.config-page-subtitle {
-    font-size: 18px;
-    color: #8C6D3D;
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.section-title {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-    margin: 30px 0 15px 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.ai-badge {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    font-size: 12px;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-weight: normal;
-}
-
-.scenario-cards-row {
-    display: flex !important;
-    gap: 15px !important;
-    margin-bottom: 20px !important;
-}
-
-.scene-card {
-    flex: 1 !important;
-    padding: 20px !important;
-    background: white !important;
-    border: 2px solid #E5E7EB !important;
-    border-radius: 12px !important;
-    transition: all 0.3s !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-}
-
-.scene-card:hover {
-    border-color: #F5A623 !important;
-    box-shadow: 0 4px 12px rgba(245, 166, 35, 0.2) !important;
-    transform: translateY(-2px) !important;
-}
-
-.roster-container {
-    display: flex;
-    gap: 20px;
-    margin: 20px 0;
-}
-
-.roster-card {
-    flex: 1;
+    top: 10px;
+    left: 15px;
     background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: all 0.3s;
-}
-
-.roster-card:hover {
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-    transform: translateY(-4px);
-}
-
-.roster-avatar {
-    font-size: 48px;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.roster-name {
-    font-size: 20px;
-    font-weight: bold;
-    color: #1a237e;
-    text-align: center;
-    margin-bottom: 8px;
-}
-
-.roster-role {
-    font-size: 14px;
-    color: #5B6BF9;
-    text-align: center;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.roster-personality {
-    font-size: 13px;
-    color: #666;
-    line-height: 1.6;
-    text-align: center;
-}
-
-.secondary-btn {
-    background: white !important;
-    border: 2px solid #E5E7EB !important;
-    color: #333 !important;
-    border-radius: 8px !important;
-    padding: 10px 20px !important;
-    font-size: 14px !important;
-    margin: 10px 5px !important;
-}
-
-.secondary-btn:hover {
-    border-color: #F5A623 !important;
-    background: #FFF9F0 !important;
-}
-
-.start-game-btn {
-    width: 100% !important;
-    height: 60px !important;
-    font-size: 20px !important;
-    font-weight: bold !important;
-    background: linear-gradient(135deg, #F5A623 0%, #D48806 100%) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 12px !important;
-    margin-top: 30px !important;
-    box-shadow: 0 6px 20px rgba(245, 166, 35, 0.4) !important;
-}
-
-.start-game-btn:hover {
-    box-shadow: 0 8px 25px rgba(245, 166, 35, 0.5) !important;
-    transform: translateY(-2px) !important;
-}
-
-.back-link-btn {
-    background: transparent !important;
-    color: #8C6D3D !important;
-    border: none !important;
-    margin-top: 15px !important;
-    font-size: 14px !important;
-}
-
-.back-link-btn:hover {
-    color: #D48806 !important;
-    text-decoration: underline !important;
-}
-
-.critique-box {
-    width: 100%;
-    background: #FFF1F0;
-    border: 1px solid #FFCCC7;
-    border-radius: 8px;
-    padding: 8px 12px;
+    padding: 8px 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    position: relative;
-    margin: 0 auto 8px auto;
 }
 
-.float-tag {
+.score-label-mini {
+    font-size: 11px;
+    color: #666;
+    font-weight: 600;
+}
+
+.score-val-large {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4A90E2;
+}
+
+/* 分数面板 - 右上角 */
+.score-board-right {
     position: absolute;
-    top: -12px;
-    right: 10px;
-    background: #1F2937;
-    color: white;
-    font-size: 10px;
-    padding: 2px 10px;
-    border-radius: 10px 10px 10px 0;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
 }
 
-.critique-text {
-    color: #CF1322;
-    font-size: 12px;
+.score-item-mini {
+    background: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 }
 
-#status-display {
-    font-size: 11px !important;
-    color: #1a237e !important;
-    opacity: 0.7 !important;
-    text-align: center !important;
+.score-val-mini {
+    font-size: 14px;
+    font-weight: bold;
 }
 
+/* 桌子曲线装饰 */
+.table-curve {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 20px;
+    background: rgba(139, 69, 19, 0.2);
+    border-radius: 50% 50% 0 0;
+    z-index: 1;
+}
+
+/* 品评框 */
+.critique-box {
+    padding: 20px;
+    background: #F8FAFC;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.critique-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.critique-content {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* ====================================
+   通用组件
+   ==================================== */
+.brand-title {
+    font-size: 56px;
+    font-weight: 900;
+    color: #2C3E50;
+    text-align: center;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.brand-subtitle {
+    font-size: 20px;
+    color: #7F8C8D;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+/* 场景卡片（选择页）*/
+.scenario-card {
+    background: white;
+    border: 2px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 180px;
+}
+
+.scenario-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border-color: #4A90E2;
+}
+
+/* 页脚 */
+.footer-action {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    margin-top: 40px;
+    cursor: pointer;
+}
+
+/* 麦克风容器 */
 .mic-container-floating {
-    background: white !important;
-    border-radius: 12px !important;
-    box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
-    padding: 10px !important;
-    margin-bottom: 5px !important;
+    position: fixed;
+    bottom: 90px;
+    right: 30px;
+    z-index: 100;
+}
+
+/* 复盘报告页 */
+.report-page {
+    flex-direction: column;
+    background: #2c313c;
+    padding: 0;
+    overflow: hidden;
+}
+
+.report-buttons {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    gap: 15px;
+    z-index: 100;
+}
+
+/* 按钮样式统一 */
+.btn-purple {
+    background: linear-gradient(135deg, #8E7CC3 0%, #6C5B7B 100%);
+    color: white;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.btn-purple:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(142, 124, 195, 0.4);
+    filter: brightness(1.1);
+}
+
+/* ====================================
+   响应式
+   ==================================== */
+@media (max-width: 768px) {
+    .config-page {
+        padding: 20px;
+    }
+
+    .scenario-cards-row,
+    .roster-row {
+        flex-direction: column;
+    }
+
+    .aura-sidebar {
+        display: none;
+    }
 }
 """

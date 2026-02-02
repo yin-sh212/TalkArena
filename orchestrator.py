@@ -248,12 +248,20 @@ class Orchestrator:
 3. 表哥（副陪）：起哄能手，最爱‘陪一个’。
 
 任务：你现在要同时扮演这三个AI角色与用户对决。
-规则：
-- 每一轮对话中，可以是一个角色说话，也可以是两三个角色依次接话。
-- 必须保持浓重的鲁中口音和饭桌文化特色（昂、木有、杠好、养鱼）。
-- 核心目标是让用户喝酒，并用气场压制用户。
-- 输出格式严格为：角色名: [内容]。如果有多个角色说话，换行输出。""",
-                "opening": "大舅:（站起来，红光满面）哎！那个谁，刚考上研那个外甥，别在那扣手机了！往主宾位坐坐。来，大舅先起个头，这第一杯酒，咱得全干了，这叫‘开门红’，不喝就是不给大舅面子昂！\n表哥: 就是，外甥，咱大舅亲自给你起头，这是多大的面子！我也陪一个，咱爷俩一起敬大舅！"
+
+【严格规则 - 必须遵守】：
+1. **每一轮只能1个角色说话**
+2. **禁止替用户说话！绝对不能出现"你:"或"用户:"开头的内容**
+3. 角色要轮流随机发言，避免每次都是同一个人
+4. 每个角色台词简短有力，不超过60字
+5. 保持浓重的鲁中口音（昂、木有、杠好、养鱼）
+
+【输出格式】：
+大舅: [台词内容]
+
+**严禁多个角色同时发言！只能1个角色！**
+**绝对禁止**：你: [任何内容]""",
+                "opening": "大舅:（站起来，红光满面）哎！那个谁，刚考上研那个外甥，别在那扣手机了！往主宾位坐坐。来，大舅先起个头，这第一杯酒，咱得全干了，这叫'开门红'，不喝就是不给大舅面子昂！"
             }
         }
     
@@ -354,12 +362,20 @@ class Orchestrator:
         
         context_lines = [f"{name}: {text}" for name, text in session.chat_history[-8:]]
         context = "\n".join(context_lines)
-        
+
+        # 获取当前场景的角色列表
+        characters = scenario.get("characters", [])
+        character_list_str = ""
+        if characters:
+            char_names = [f"{c.get('avatar', '')} {c['name']}" for c in characters]
+            character_list_str = f"\n【可用角色列表】（你只能扮演以下角色，不能编造其他角色）\n" + "\n".join([f"- {name}" for name in char_names])
+
         ai_prompt_name = session.ai_name
         if "characters" in scenario:
             ai_prompt_name = "请根据场景角色进行回复"
-            
+
         prompt = f"""{scenario['system_prompt']}
+{character_list_str}
 
 【当前局势】
 你的气场: {session.ai_dominance}/100
@@ -369,13 +385,14 @@ class Orchestrator:
 【对话记录】
 {context}
 
-【回复要求】
-1. 完全进入角色，保持强势和攻击性
-2. 针对对方刚才说的内容进行反驳、质疑或施压
-3. 如果你气场高，要乘胜追击，碾压对方
-4. 如果你气场低，要绝地反击，扳回局面
-5. 只输出对话内容，可含动作描写（用括号）
-6. 如果有多个角色，输出格式为“角色名: 内容”，每个角色占一行
+【本轮回复要求】
+1. **只能1个角色说话！严禁多个角色！**
+2. **只能使用上面【可用角色列表】中的角色名，不能编造其他角色**
+3. **绝对禁止替用户说话，不能出现"你:"开头的内容**
+4. 完全进入角色，保持强势和攻击性
+5. 针对对方刚才说的内容进行反驳、质疑或施压
+6. 只输出对话内容，可含动作描写（用括号）
+7. 格式："角色名: 内容"
 
 {ai_prompt_name}:"""
         
@@ -506,12 +523,20 @@ class Orchestrator:
         
         context_lines = [f"{name}: {text}" for name, text in session.chat_history[-8:]]
         context = "\n".join(context_lines)
-        
+
+        # 获取当前场景的角色列表
+        characters = scenario.get("characters", [])
+        character_list_str = ""
+        if characters:
+            char_names = [f"{c.get('avatar', '')} {c['name']}" for c in characters]
+            character_list_str = f"\n【可用角色列表】（你只能扮演以下角色，不能编造其他角色）\n" + "\n".join([f"- {name}" for name in char_names])
+
         ai_prompt_name = session.ai_name
         if "characters" in scenario:
             ai_prompt_name = "请根据场景角色进行回复"
-            
+
         prompt = f"""{scenario['system_prompt']}
+{character_list_str}
 
 【当前局势】
 你的气场: {session.ai_dominance}/100
@@ -524,11 +549,14 @@ class Orchestrator:
 刚才有一位"救场大师"介入帮助对方说话了。你需要回应这位救场大师的发言。
 可以表现出对外援介入的不满，继续保持攻势。
 
-【回复要求】
-1. 完全进入角色，保持强势
-2. 回应救场大师的发言内容
-3. 只输出对话内容，可含动作描写（用括号）
-4. 如果有多个角色，输出格式为"角色名: 内容"，每个角色占一行
+【本轮回复要求】
+1. **只能1个角色说话！严禁多个角色！**
+2. **只能使用上面【可用角色列表】中的角色名，不能编造其他角色**
+3. **绝对禁止替用户说话，不能出现"你:"开头的内容**
+4. 完全进入角色，保持强势
+5. 回应救场大师的发言内容
+6. 只输出对话内容，可含动作描写（用括号）
+7. 格式："角色名: 内容"
 
 {ai_prompt_name}:"""
         
