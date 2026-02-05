@@ -11,19 +11,15 @@ sys.path.append(current_dir)
 from ui.handlers import (
     get_scenarios, start_session, send_message,
     process_voice_input, end_session, init_models,
-    handle_user_register, handle_rescue
+    handle_rescue
 )
 from ui.theme import CUSTOM_CSS
 from ui.components import (
-    render_aura_dashboard, render_avatar_section,
     render_visual_stage, render_critique_box, render_aura_sidebar
 )
-from ui.user import get_current_user, register_user
+from ui.user import get_current_user
 
 SCENARIOS = {
-    "negotiation": {"name": "商务谈判", "desc": "与王总进行一场商务价格谈判"},
-    "debate": {"name": "辩论赛", "desc": "与反方辩手进行一场激烈辩论"},
-    "interview": {"name": "压力面试", "desc": "挑战刷人的HR总监压力面试"},
     "shandong_dinner": {"name": "山东人的饭桌", "desc": "挑战大舅的劝酒功力和酒桌规矩"},
 }
 
@@ -555,7 +551,7 @@ def create_ui():
 
             characters = scene.get("characters") if scene else []
             logging.info(f"[DEBUG] 开始调用handle_rescue，characters={[c['name'] if isinstance(c, dict) else c for c in characters]}")
-            chat_result, status, ai_d, user_d, audio, suggestion = handle_rescue(sess, history, "")
+            chat_result, status, ai_d, user_d, audio, suggestion = handle_rescue(sess, history)
             
             return (
                 chat_result,
