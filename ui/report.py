@@ -3,6 +3,10 @@
 """
 from typing import Dict, List, Tuple
 import json
+import matplotlib.pyplot as plt
+import numpy as np
+from io import BytesIO
+import base64
 
 def get_medal_by_scores(scores: Dict[str, int]) -> str:
     """根据五维分数自动判定勋章称号"""
@@ -46,6 +50,71 @@ def get_medal_by_scores(scores: Dict[str, int]) -> str:
     return "初出茅庐"
 
 
+def generate_radar_chart_base64(scores: Dict[str, int]) -> str:
+    """生成雷达图并返回base64编码的图片"""
+    try:
+        import matplotlib
+        matplotlib.use('Agg')  # 使用非交互式后端
+
+        # 设置中文字体
+        plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'SimHei', 'DejaVu Sans']
+        plt.rcParams['axes.unicode_minus'] = False
+
+        # 五维数据
+        labels = ['圆滑度', '亲和力', '逻辑性', '幽默感', '懂规矩']
+        values = [
+            scores.get("oily", 0),
+            scores.get("friendliness", 0),
+            scores.get("logic", 0),
+            scores.get("humor", 0),
+            scores.get("respect", 0)
+        ]
+
+        # 为了闭合雷达图，需要将第一个值追加到末尾
+        values_closed = values + [values[0]]
+
+        # 角度计算
+        angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
+        angles_closed = angles + [angles[0]]
+
+        # 创建图形
+        fig, ax = plt.subplots(figsize=(4, 4), subplot_kw=dict(projection='polar'), facecolor='none')
+
+        # 绘制雷达图
+        ax.plot(angles_closed, values_closed, 'o-', linewidth=2, color='#4a5dca', label='你的表现')
+        ax.fill(angles_closed, values_closed, alpha=0.25, color='#4a5dca')
+
+        # 设置标签
+        ax.set_xticks(angles)
+        ax.set_xticklabels(labels, fontsize=10)
+
+        # 设置刻度范围
+        ax.set_ylim(0, 100)
+        ax.set_yticks([20, 40, 60, 80, 100])
+        ax.set_yticklabels(['20', '40', '60', '80', '100'], fontsize=8, color='#666')
+
+        # 网格样式
+        ax.grid(True, linestyle='--', alpha=0.3)
+
+        # 背景透明
+        ax.set_facecolor('none')
+        fig.patch.set_alpha(0.0)
+
+        # 保存为base64
+        buffer = BytesIO()
+        plt.savefig(buffer, format='png', transparent=True, bbox_inches='tight', dpi=100)
+        buffer.seek(0)
+        image_base64 = base64.b64encode(buffer.read()).decode()
+        plt.close(fig)
+
+        return f"data:image/png;base64,{image_base64}"
+    except Exception as e:
+        import logging
+        logging.error(f"[雷达图生成失败] {e}")
+        # 返回一个占位符SVG
+        return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGV4dCB4PSIxNTAiIHk9IjE1MCIgZm9udC1zaXplPSIxOCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+6Zuv6L6+5Zu+5pqW5oiQ5aSx6LSlPC90ZXh0Pjwvc3ZnPg=="
+
+
 def render_report_card(
     scene_name: str,
     medal: str,
@@ -55,13 +124,16 @@ def render_report_card(
     suggestion: str
 ) -> str:
     """渲染复盘报告卡片HTML"""
-    
+
     # 五维分数
     oily = scores.get("oily", 0)
     friendliness = scores.get("friendliness", 0)
     logic = scores.get("logic", 0)
     humor = scores.get("humor", 0)
     respect = scores.get("respect", 0)
+
+    # 生成雷达图base64图片
+    radar_chart_img = generate_radar_chart_base64(scores)
     
     # 构建NPC OS HTML
     npc_os_html = ""
@@ -94,9 +166,9 @@ def render_report_card(
                 <div style="background: #e74c3c; color: white; padding: 10px 20px; border-radius: 12px; font-weight: 800; font-size: 18px; transform: rotate(-3deg); box-shadow: 4px 8px 15px rgba(231, 76, 60, 0.3); margin: 20px 0; cursor: default; transition: all 0.3s;">
                     {medal}
                 </div>
-                
-                <div style="width: 280px; height: 280px; margin: 10px 0;">
-                    <canvas id="radarChart"></canvas>
+
+                <div style="width: 300px; height: 300px; margin: 10px 0; display: flex; align-items: center; justify-content: center;">
+                    <img src="{radar_chart_img}" alt="能力雷达图" style="width: 100%; height: 100%; object-fit: contain;" />
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 20px; gap: 10px;">
@@ -150,40 +222,6 @@ def render_report_card(
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctx = document.getElementById('radarChart').getContext('2d');
-        new Chart(ctx, {{
-            type: 'radar',
-            data: {{
-                labels: ['圆滑度', '亲和力', '逻辑性', '幽默感', '懂规矩'],
-                datasets: [{{
-                    label: '你的表现',
-                    data: [{oily}, {friendliness}, {logic}, {humor}, {respect}],
-                    backgroundColor: 'rgba(74, 93, 202, 0.2)',
-                    borderColor: 'rgba(74, 93, 202, 1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: 'rgba(74, 93, 202, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(74, 93, 202, 1)'
-                }}]
-            }},
-            options: {{
-                scales: {{
-                    r: {{
-                        angleLines: {{ display: true }},
-                        suggestedMin: 0,
-                        suggestedMax: 100
-                    }}
-                }},
-                plugins: {{
-                    legend: {{ display: false }}
-                }}
-            }}
-        }});
-    </script>
     '''
-    
+
     return html

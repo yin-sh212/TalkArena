@@ -1,0 +1,19 @@
+2026-01-30 16:27:30,083 [INFO] Handlers 初始化模型...
+2026-01-30 16:27:30,084 [INFO] ============================================================
+2026-01-30 16:27:30,084 [INFO] TalkArena Orchestrator 初始化
+2026-01-30 16:27:30,084 [INFO] ============================================================
+2026-01-30 16:27:30,084 [INFO] 加载 LLM 模型...
+2026-01-30 16:27:36,548 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-30 16:27:36,980 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-30 16:27:37,563 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-30 16:27:38,176 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-30 16:27:38,177 [INFO] 加载 TTS 模型...
+2026-01-30 16:27:38,252 [INFO] 加载 STT 模型...
+2026-01-30 16:27:38,481 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-30 16:27:38,481 [INFO] Handlers 模型初始化完成
+2026-01-30 16:28:26,065 [INFO] ============================================================
+2026-01-30 16:28:26,066 [INFO] [SESSION a9916d79] 新对局开始
+2026-01-30 16:28:26,066 [INFO]   场景: 山东人的饭桌
+2026-01-30 16:28:26,066 [INFO]   AI角色: 大舅 / 大妗子 / 表哥
+2026-01-30 16:28:26,066 [INFO]   初始气场: 用户 50 vs AI 50
+2026-01-30 16:28:26,066 [INFO] ============================================================
