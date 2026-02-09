@@ -196,23 +196,21 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
         chat_history.append({"role": "user", "content": user_input.replace("💡 **(大师介入)**: ", ""), "metadata": {"title": "救场大师"}})
     
     thinking_msg_added = False
-    think_start = None
     model_name = ""
-    
+
     # 清理输入文本（去除展示用的前缀）
     actual_input = user_input.replace("💡 **(大师介入)**: ", "")
-    
+
     for update in orch.process_turn_streaming(session_id, actual_input):
         stage = update["stage"]
         ai_dom = update["ai_dominance"]
         user_dom = update["user_dominance"]
-        
+
         if stage == "user_sent":
             yield chat_history, "", ai_dom, user_dom, None, False
 
         elif stage == "ai_thinking":
             model_name = update.get("model_name", "")
-            think_start = update.get("think_start")
             if not thinking_msg_added:
                 chat_history.append({"role": "assistant", "content": f"🤔 **正在思考...** (模型: {model_name})"})
                 thinking_msg_added = True
@@ -225,12 +223,8 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
             ai_text = update["ai_text"]
             audio_path = update["audio_path"]
             judgment = update.get("judgment", "")
-            shift = update.get("dominance_shift", 0)
             game_over = update.get("game_over", False)
-            game_result = update.get("game_result", None)
 
-            shift_str = f"+{shift}" if shift > 0 else str(shift)
-            
             # 处理多角色解析
             responses = []
             scenario = orch.scenarios.get(session.scenario_id, {})
@@ -282,36 +276,31 @@ def send_message(session_id: str, user_input: str, chat_history: List) -> Genera
                 chat_history.pop()
 
             # 合并多个角色的消息为一条，避免Gradio合并显示导致嵌套
-            import time
-            think_time = f"{time.time() - think_start:.1f}s" if think_start else ""
-
             if len(responses) > 1:
                 # 多个角色：合并为一条消息
                 combined_content = "\n\n---\n\n".join([r["content"] for r in responses])
-                combined_content += f"\n\n---\n_📊 {judgment} (气场{shift_str}) | ⚙️ {model_name} {think_time}_"
                 chat_history.append({"role": "assistant", "content": combined_content})
             elif len(responses) == 1:
                 # 单个角色：直接添加
-                responses[0]["content"] += f"\n\n---\n_📊 {judgment} (气场{shift_str}) | ⚙️ {model_name} {think_time}_"
                 chat_history.append(responses[0])
 
-            yield chat_history, "", ai_dom, user_dom, audio_path, game_over
+            yield chat_history, judgment, ai_dom, user_dom, audio_path, game_over
 
-def handle_rescue(session_id: str, chat_history: List, txt_input: str) -> Tuple:
+def handle_rescue(session_id: str, chat_history: List) -> Tuple:
     """处理救场请求 - 生成高情商回复供用户参考"""
     if not session_id:
         return (chat_history, "❌ 请先开始对决", 50, 50, None, "")
-    
+
     orch = get_orchestrator()
     session = orch.sessions[session_id]
-    
+
     # 调用AI生成高情商回复建议
     suggestion = orch.get_rescue_suggestion(session_id)
-    
+
     # 将建议填入输入框，由用户决定是否发送
     return (chat_history, "💡 已生成高情商回复建议，请查看输入框", session.ai_dominance, session.user_dominance, None, suggestion)
 
-def end_session(session_id: str, chat_history: List):
+def end_session(session_id: str):
     """结束对决，生成总结和建议"""
     if not session_id:
         return gr.update(visible=False), gr.update(visible=False), "❌ 请先开始对决"
