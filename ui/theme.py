@@ -39,7 +39,7 @@ body, html {
 
 .gradio-container > div,
 [data-testid="column"] {
-    border: none;
+    border: none !important;
 }
 
 /* ====================================
@@ -645,6 +645,10 @@ body, html {
     padding: 6px 14px;
 }
 
+.avatar-box:hover {
+    transform: translateY(-5px);
+}
+
 /* 头像图片 */
 .avatar-img {
     width: 60px;
@@ -947,3 +951,4 @@ body, html {
     }
 }
 """
+

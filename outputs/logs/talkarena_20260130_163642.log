@@ -1,0 +1,13 @@
+2026-01-30 16:36:42,578 [INFO] Handlers 初始化模型...
+2026-01-30 16:36:42,578 [INFO] ============================================================
+2026-01-30 16:36:42,578 [INFO] TalkArena Orchestrator 初始化
+2026-01-30 16:36:42,578 [INFO] ============================================================
+2026-01-30 16:36:42,578 [INFO] 加载 LLM 模型...
+2026-01-30 16:36:43,689 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-30 16:36:44,244 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-30 16:36:44,824 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-30 16:36:45,474 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-30 16:36:45,476 [INFO] 加载 TTS 模型...
+2026-01-30 16:36:45,576 [INFO] 加载 STT 模型...
+2026-01-30 16:36:45,766 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-30 16:36:45,766 [INFO] Handlers 模型初始化完成

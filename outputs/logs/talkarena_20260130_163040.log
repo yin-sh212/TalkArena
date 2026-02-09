@@ -1,0 +1,17 @@
+2026-01-30 16:30:40,114 [INFO] Handlers 初始化模型...
+2026-01-30 16:30:40,114 [INFO] ============================================================
+2026-01-30 16:30:40,114 [INFO] TalkArena Orchestrator 初始化
+2026-01-30 16:30:40,114 [INFO] ============================================================
+2026-01-30 16:30:40,114 [INFO] 加载 LLM 模型...
+2026-01-30 16:30:40,678 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-30 16:30:40,678 [INFO] Retrying request to /chat/completions in 0.432032 seconds
+2026-01-30 16:30:41,253 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-30 16:30:41,255 [INFO] Retrying request to /chat/completions in 0.919380 seconds
+2026-01-30 16:30:42,280 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-30 16:30:42,724 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-30 16:30:43,121 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-30 16:30:43,643 [INFO] HTTP Request: POST https://api-inference.modelscope.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-30 16:30:43,653 [INFO] 加载 TTS 模型...
+2026-01-30 16:30:43,738 [INFO] 加载 STT 模型...
+2026-01-30 16:30:43,954 [INFO] [STT] Vosk 离线模型加载成功
+2026-01-30 16:30:43,954 [INFO] Handlers 模型初始化完成
