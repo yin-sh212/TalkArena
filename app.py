@@ -23,21 +23,55 @@ SCENARIOS = {
     "shandong_dinner": {"name": "山东人的饭桌", "desc": "挑战大舅的劝酒功力和酒桌规矩"},
 }
 
-# 成员候选池（更丰富的角色列表）
-MEMBERS_POOL = [
-    ("👴", "大舅", "主陪·长辈·灵魂人物", "鲁中地区德高望重的长辈，热情但极讲规矩，擅长情感绑架和逻辑劝酒…"),
-    ("👵", "大妗子", "旁观者·数杯人", "大舅的老伴，明着劝你别喝，实则数着你喝了几杯，为大舅再敬你找理由…"),
-    ("👨", "表哥", "副陪·起哄能手", "大舅的儿子，负责活跃气氛，最擅长说'我陪一个'然后让你干了…"),
-    ("👨‍💼", "王局长", "主陪·局领导·威压全场", "深谙官场礼仪，对座次、敬酒顺序极为讲究，用话语掌控节奏…"),
-    ("👔", "李总", "副陪·商界老板·副驾驶", "能言善辩，擅长活跃气氛，总能找到话题接茬，能左右逢源…"),
-    ("👩", "小赵", "实诚晚辈·新手", "性格耿直但缺乏饭局经验，善于酒桌踩雷，为了替领导撑面子…"),
-    ("🧔", "老张", "酒桌老炮·段子手", "三句不离酒，满嘴都是段子，最擅长用俗语和顺口溜劝酒…"),
-    ("👨‍🦳", "二叔", "话唠长辈·回忆杀", "喜欢翻旧账，动不动就说'当年你还小的时候'，情感攻势一流…"),
-    ("👧", "表妹", "气氛组·起哄专家", "负责烘托气氛，最爱说'姐你喝不喝我都干了'，然后逼你也干…"),
-    ("🧑‍💼", "老同学", "同辈·攀比狂魔", "总爱炫耀自己混得好，用激将法让你多喝，'咱俩谁跟谁啊'…"),
-    ("👨‍🎓", "小舅", "文化人·掉书袋", "喜欢引经据典，用诗词歌赋劝酒，'酒逢知己千杯少'挂嘴边…"),
-    ("👱‍♀️", "嫂子", "和事佬·双面人", "表面劝你少喝，转头就跟别人说'他酒量好着呢'，典型的捧一踩一…")
-]
+# 按场景分类的成员候选池
+SCENE_MEMBERS_POOL = {
+    "家庭聚会": [
+        ("👴", "大舅", "主陪·长辈·灵魂人物", "鲁中地区德高望重的长辈，热情但极讲规矩，擅长情感绑架和逻辑劝酒"),
+        ("👵", "大妗子", "旁观者·数杯人", "大舅的老伴，明着劝你别喝，实则数着你喝了几杯，为大舅再敬你找理由"),
+        ("👨", "表哥", "副陪·起哄能手", "大舅的儿子，负责活跃气氛，最擅长说'我陪一个'然后让你干了"),
+        ("👨‍🦳", "二叔", "话唠长辈·回忆杀", "喜欢翻旧账，动不动就说'当年你还小的时候'，情感攻势一流"),
+        ("👧", "表妹", "气氛组·起哄专家", "负责烘托气氛，最爱说'姐你喝不喝我都干了'，然后逼你也干"),
+        ("👨‍🎓", "小舅", "文化人·掉书袋", "喜欢引经据典，用诗词歌赋劝酒，'酒逢知己千杯少'挂嘴边"),
+        ("👱‍♀️", "嫂子", "和事佬·双面人", "表面劝你少喝，转头就跟别人说'他酒量好着呢'，典型的捧一踩一"),
+        ("👨‍👩‍👦", "堂哥", "爱面子·要排场", "在家族里混得不错，总想显摆一下，喜欢用'咱家的规矩'压人"),
+    ],
+    "单位聚餐": [
+        ("👨‍💼", "王局长", "主陪·局领导·威压全场", "深谙官场礼仪，对座次、敬酒顺序极为讲究，用话语掌控节奏"),
+        ("👩", "小赵", "实诚晚辈·新手", "性格耿直但缺乏饭局经验，善于酒桌踩雷，为了替领导撑面子"),
+        ("🧔", "老张", "酒桌老炮·段子手", "三句不离酒，满嘴都是段子，最擅长用俗语和顺口溜劝酒"),
+        ("👔", "科长", "副陪·马屁精", "最擅长察言观色，见人说人话，总能找到话题接茬给领导捧场"),
+        ("👨‍💻", "小李", "年轻同事·话少", "刚入职场不久，话不多但酒量不错，容易被拉出来挡酒"),
+        ("👩‍💼", "办公室主任", "掌控全局·协调高手", "负责组局安排座次，最懂规矩，一个眼神就能让你明白该干什么"),
+        ("🧑‍💼", "老陈", "老资格·倚老卖老", "在单位混了二十年，资历老但职位不高，喜欢摆老资格压后辈"),
+    ],
+    "商务宴请": [
+        ("👨‍💼", "王总", "主陪·企业老板·掌控全场", "商界大佬，深谙商务礼仪，用酒局谈生意，滴水不漏"),
+        ("👔", "李总", "副陪·商界精英·副驾驶", "能言善辩，擅长活跃气氛，总能找到话题接茬，能左右逢源"),
+        ("🧑‍💼", "张经理", "业务骨干·谈判高手", "负责具体业务对接，专业但不失人情味，擅长在酒桌上谈合作"),
+        ("👨‍💻", "小刘", "助理·执行者", "总经理助理，负责倒酒递烟，眼力见儿好，随时准备替领导挡酒"),
+        ("👩‍💼", "财务总监", "冷静理智·算盘精", "话不多但句句在点上，负责把控预算和风险，不轻易表态"),
+        ("🧔", "老胡", "人脉广·资源多", "混迹商界多年，认识的人多，最擅长牵线搭桥，喝酒海量"),
+        ("👨‍🏫", "顾问", "智囊·幕后军师", "不轻易出手，但一开口就是关键建议，用酒局观察合作方靠不靠谱"),
+    ],
+    "同学聚会": [
+        ("🧑‍💼", "老同学", "同辈·攀比狂魔", "总爱炫耀自己混得好，用激将法让你多喝，'咱俩谁跟谁啊'"),
+        ("👨", "班长", "组局者·话事人", "组织这次聚会，最爱回忆当年，'想当年咱们那会儿'，喜欢灌酒"),
+        ("👧", "校花", "气氛组·回忆杀", "当年的女神，现在已为人妻，喜欢拿当年的事开玩笑劝酒"),
+        ("👨‍🎓", "学霸", "成功人士·低调", "当年成绩好现在混得也不错，不爱显摆但酒量好，一喝就停不下来"),
+        ("🧔", "体育委员", "直爽豪放·酒量大", "当年体育好，现在开健身房，豪爽直接，喝酒从不含糊"),
+        ("👩", "小美", "八卦王·消息灵通", "最爱打听同学们的近况，边喝边聊八卦，气氛活跃"),
+        ("👨‍💻", "创业者", "话题王·理想主义", "毕业后创业，喜欢聊理想聊人生，酒桌上总想拉投资"),
+    ],
+    "招待客户": [
+        ("👔", "李总", "东道主·商界老板", "作为东道主热情招待，最懂待客之道，让客人感受到诚意"),
+        ("🧔", "老张", "酒桌老炮·气氛担当", "负责活跃气氛，会讲段子会劝酒，让客户觉得宾至如归"),
+        ("👨‍💼", "销售总监", "业务精英·关系维护", "负责客户关系维护，专业又热情，最擅长在酒桌上拉近距离"),
+        ("👩", "小王", "贴心助理·服务周到", "负责倒酒递烟，眼力见儿极好，让客户感受到周到服务"),
+        ("🧑‍💼", "技术总监", "专业担当·实诚", "负责技术交流，话不多但靠谱，用实力赢得客户信任"),
+        ("👨‍🏫", "顾问", "智囊·专业背书", "为公司提供专业背书，不轻易说话，但一开口就是干货"),
+        ("👨‍💻", "项目经理", "执行力强·细节控", "负责具体项目对接，事无巨细，让客户放心合作"),
+    ]
+}
 
 
 def create_ui():
@@ -51,40 +85,53 @@ def create_ui():
 
         # ========== Page 1: 场景选择页 ==========
         with gr.Column(visible=True, elem_classes="scene-select-page") as page_select:
-            gr.HTML('<div class="brand-title">TalkArena</div>')
-            gr.HTML('<div class="brand-subtitle">选择挑战场景</div>')
+            # 场景介绍区域 - 中国风设计
+            gr.HTML('''
+            <div style="max-width: 800px; margin: 15px auto; padding: 20px; background: #FFFFFF; border: 4px solid #C8102E; border-radius: 8px; box-shadow: 0 4px 20px rgba(200, 16, 46, 0.15);">
+                <div style="text-align: center; margin-bottom: 12px; border-bottom: 2px solid #C8102E; padding-bottom: 10px;">
+                    <div style="color: #C8102E; font-size: 32px; font-weight: bold; letter-spacing: 2px;">
+                        山东人的饭桌
+                    </div>
+                    <div style="color: #8B0000; font-size: 14px; margin-top: 8px; letter-spacing: 1px;">
+                        酒桌情商实战训练场
+                    </div>
+                </div>
+
+                <div style="color: #333; font-size: 15px; line-height: 1.8; padding: 0 10px;">
+                    <div style="margin-bottom: 10px; padding-left: 12px; border-left: 3px solid #C8102E;">
+                        <span style="color: #C8102E; font-weight: bold;">核心玩法</span><br/>
+                        <span style="color: #555;">在山东酒桌文化的情商高压测试中生存下来，学会应对各种劝酒话术、座次礼仪和人情世故</span>
+                    </div>
+
+                    <div style="margin-bottom: 10px; padding-left: 12px; border-left: 3px solid #C8102E;">
+                        <span style="color: #C8102E; font-weight: bold;">训练目标</span><br/>
+                        <span style="color: #555;">掌握高情商应对技巧，在不失礼节的前提下化解劝酒攻势，提升社交应变能力</span>
+                    </div>
+
+                    <div style="margin-bottom: 10px; padding-left: 12px; border-left: 3px solid #C8102E;">
+                        <span style="color: #C8102E; font-weight: bold;">角色设定</span><br/>
+                        <span style="color: #555;">面对大舅、大妗子、表哥等12种经典酒桌角色，每个角色都有独特的劝酒套路和性格特点</span>
+                    </div>
+
+                    <div style="padding-left: 12px; border-left: 3px solid #C8102E;">
+                        <span style="color: #C8102E; font-weight: bold;">挑战难度</span><br/>
+                        <span style="color: #555;">从家庭聚会到商务宴请，5种不同场景，难度递增，考验你的临场反应和情商底蕴</span>
+                    </div>
+                </div>
+            </div>
+            ''')
 
             scenario_buttons = []
-            
-            # 创建两列布局
-            with gr.Row(elem_classes="scenario-grid"):
-                with gr.Column(scale=1):
-                    for i, (display_name, sid) in enumerate(scenarios_data):
-                        if i % 2 == 0:  # 左列
-                            is_active = (sid == "shandong_dinner")
-                            cfg = SCENARIOS.get(sid, {"name": display_name, "desc": "开始挑战！"})
-                            btn_label = f"📋 {cfg['name']}" + ("" if is_active else " (建设中)")
-                            btn = gr.Button(
-                                value=f"{btn_label}\n{cfg['desc']}",
-                                elem_classes="scenario-card",
-                                interactive=is_active
-                            )
-                            scenario_buttons.append((btn, sid, cfg["name"], cfg["desc"]))
-                
-                with gr.Column(scale=1):
-                    for i, (display_name, sid) in enumerate(scenarios_data):
-                        if i % 2 == 1:  # 右列
-                            is_active = (sid == "shandong_dinner")
-                            cfg = SCENARIOS.get(sid, {"name": display_name, "desc": "开始挑战！"})
-                            btn_label = f"📋 {cfg['name']}" + ("" if is_active else " (建设中)")
-                            btn = gr.Button(
-                                value=f"{btn_label}\n{cfg['desc']}",
-                                elem_classes="scenario-card",
-                                interactive=is_active
-                            )
-                            scenario_buttons.append((btn, sid, cfg["name"], cfg["desc"]))
 
-            gr.HTML('<div class="footer-action">自定义场景 ?</div>')
+            # 只显示山东饭桌场景
+            with gr.Row(elem_classes="scenario-grid"):
+                cfg = SCENARIOS.get("shandong_dinner", {"name": "山东人的饭桌", "desc": "挑战大舅的劝酒功力和酒桌规矩"})
+                btn = gr.Button(
+                    value="🍺 开始挑战",
+                    elem_classes="scenario-card-main",
+                    interactive=True
+                )
+                scenario_buttons.append((btn, "shandong_dinner", cfg["name"], cfg["desc"]))
 
        # ========== Page 2: 角色配置页 (仅山东饭局) ==========
         with gr.Column(visible=False, elem_classes="config-page") as page_config:
@@ -119,14 +166,15 @@ def create_ui():
             # 成员选择状态
             member_selected = [gr.State(True), gr.State(True), gr.State(True)]  # 默认全选
 
-            # 当前显示的成员（用State存储，初始为前3个）
-            current_members = gr.State([MEMBERS_POOL[0], MEMBERS_POOL[1], MEMBERS_POOL[2]])
+            # 当前显示的成员（用State存储，初始为商务宴请场景的前3个）
+            default_scene_members = SCENE_MEMBERS_POOL["商务宴请"]
+            current_members = gr.State([default_scene_members[0], default_scene_members[1], default_scene_members[2]])
 
             with gr.Row(elem_classes="roster-row"):
                 member_buttons = []
                 for i in range(3):
                     btn = gr.Button(
-                        value=f"{MEMBERS_POOL[i][0]}\n{MEMBERS_POOL[i][1]}\n{MEMBERS_POOL[i][2]}\n{MEMBERS_POOL[i][3]}",
+                        value=f"{default_scene_members[i][0]}\n{default_scene_members[i][1]}\n{default_scene_members[i][2]}\n{default_scene_members[i][3]}",
                         elem_classes="roster-card roster-card-selected",
                         scale=1
                     )
@@ -266,16 +314,31 @@ def create_ui():
         }
 
         def update_scene(idx):
+            import logging
+            import random
             all_scenes = ["家庭聚会", "单位聚餐", "商务宴请", "同学聚会", "招待客户"]
             scene_name = all_scenes[idx]
             desc = scene_descriptions.get(scene_name, "")
-            import logging
             logging.info(f"[DEBUG] 场景选择: idx={idx}, {scene_name} - {desc}")
 
-            # 返回：选中场景, 场景描述, 以及5个按钮的更新状态
+            # 从对应场景的角色池中随机选择3个角色
+            scene_members = SCENE_MEMBERS_POOL.get(scene_name, [])
+            if len(scene_members) >= 3:
+                selected_members = random.sample(scene_members, 3)
+            else:
+                selected_members = scene_members
+
+            logging.info(f"[DEBUG] 场景切换，新成员: {[m[1] for m in selected_members]}")
+
+            # 返回：选中场景, 场景描述, 全选状态重置, 新成员列表, 3个成员按钮更新, 5个场景按钮的更新状态
             return (
                 scene_name,
                 gr.update(value=desc),
+                True, True, True,  # 重置选中状态为全选
+                selected_members,  # 更新current_members
+                gr.update(value=f"{selected_members[0][0]}\n{selected_members[0][1]}\n{selected_members[0][2]}\n{selected_members[0][3]}", elem_classes="roster-card roster-card-selected"),
+                gr.update(value=f"{selected_members[1][0]}\n{selected_members[1][1]}\n{selected_members[1][2]}\n{selected_members[1][3]}", elem_classes="roster-card roster-card-selected"),
+                gr.update(value=f"{selected_members[2][0]}\n{selected_members[2][1]}\n{selected_members[2][2]}\n{selected_members[2][3]}", elem_classes="roster-card roster-card-selected"),
                 gr.update(elem_classes="scene-card scene-card-selected" if idx == 0 else "scene-card"),
                 gr.update(elem_classes="scene-card scene-card-selected" if idx == 1 else "scene-card"),
                 gr.update(elem_classes="scene-card scene-card-selected" if idx == 2 else "scene-card"),
@@ -286,23 +349,23 @@ def create_ui():
         # 为每个场景按钮绑定点击事件
         scene_cards[0].click(
             fn=lambda: update_scene(0),
-            outputs=[selected_scene, scene_desc, scene_cards[0], scene_cards[1], scene_cards[2], scene_cards[3], scene_cards[4]]
+            outputs=[selected_scene, scene_desc] + member_selected + [current_members] + member_buttons + scene_cards
         )
         scene_cards[1].click(
             fn=lambda: update_scene(1),
-            outputs=[selected_scene, scene_desc, scene_cards[0], scene_cards[1], scene_cards[2], scene_cards[3], scene_cards[4]]
+            outputs=[selected_scene, scene_desc] + member_selected + [current_members] + member_buttons + scene_cards
         )
         scene_cards[2].click(
             fn=lambda: update_scene(2),
-            outputs=[selected_scene, scene_desc, scene_cards[0], scene_cards[1], scene_cards[2], scene_cards[3], scene_cards[4]]
+            outputs=[selected_scene, scene_desc] + member_selected + [current_members] + member_buttons + scene_cards
         )
         scene_cards[3].click(
             fn=lambda: update_scene(3),
-            outputs=[selected_scene, scene_desc, scene_cards[0], scene_cards[1], scene_cards[2], scene_cards[3], scene_cards[4]]
+            outputs=[selected_scene, scene_desc] + member_selected + [current_members] + member_buttons + scene_cards
         )
         scene_cards[4].click(
             fn=lambda: update_scene(4),
-            outputs=[selected_scene, scene_desc, scene_cards[0], scene_cards[1], scene_cards[2], scene_cards[3], scene_cards[4]]
+            outputs=[selected_scene, scene_desc] + member_selected + [current_members] + member_buttons + scene_cards
         )
 
         # 成员卡片点击事件
@@ -341,13 +404,18 @@ def create_ui():
         )
 
         # 随机换人按钮
-        def regenerate_roster():
+        def regenerate_roster(scene_name):
             import logging
             import random
 
-            # 从候选池随机抽取3个不同的成员
-            selected = random.sample(MEMBERS_POOL, 3)
-            logging.info(f"[DEBUG] 随机换人: {[m[1] for m in selected]}")
+            # 从当前场景的角色池随机抽取3个不同的成员
+            scene_members = SCENE_MEMBERS_POOL.get(scene_name, [])
+            if len(scene_members) >= 3:
+                selected = random.sample(scene_members, 3)
+            else:
+                selected = scene_members
+
+            logging.info(f"[DEBUG] 随机换人 (场景: {scene_name}): {[m[1] for m in selected]}")
 
             # 返回：选中状态（全选） + 新成员State + 3个按钮的更新
             button_updates = []
@@ -364,6 +432,7 @@ def create_ui():
 
         regenerate_btn.click(
             fn=regenerate_roster,
+            inputs=[selected_scene],
             outputs=member_selected + [current_members] + member_buttons
         )
 

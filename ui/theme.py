@@ -73,10 +73,11 @@ body, html {
 .scene-select-page {
     flex-direction: column;
     background: #E6F0FF;
-    overflow-y: auto;
-    justify-content: flex-start;
+    overflow: hidden;
+    justify-content: center;
     align-items: center;
-    padding: 60px 40px;
+    padding: 2vh 2vw;
+    gap: 2vh;
 }
 
 .scenario-grid {
@@ -91,9 +92,9 @@ body, html {
    ==================================== */
 .config-page {
     flex-direction: column;
-    background: linear-gradient(135deg, #FFF9F0 0%, #FFE8CC 100%);
-    padding: 40px 60px;
-    overflow-y: auto;
+    background: #E6F0FF;
+    padding: 2vh 3vw;
+    overflow: hidden;
 }
 
 .config-page > * {
@@ -101,25 +102,25 @@ body, html {
 }
 
 .config-page-title {
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 900;
-    color: #D48806;
+    color: #C8102E;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 0.5vh;
 }
 
 .config-page-subtitle {
-    font-size: 18px;
-    color: #8C6D3D;
+    font-size: 15px;
+    color: #8B0000;
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 2vh;
 }
 
 .section-title {
-    font-size: 20px;
+    font-size: 17px;
     font-weight: bold;
     color: #333;
-    margin: 30px 0 15px;
+    margin: 1.5vh 0 1vh;
 }
 
 .ai-badge {
@@ -134,19 +135,19 @@ body, html {
 
 /* 场景卡片行 */
 .scenario-cards-row {
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 1vw;
+    margin-bottom: 1.5vh;
 }
 
 /* 场景卡片 */
 .scene-card {
     flex: 1;
     min-width: 150px;
-    padding: 20px 15px;
+    padding: 1.5vh 1vw;
     background: white;
     border: 2px solid #E5E7EB;
-    border-radius: 12px;
-    font-size: 16px;
+    border-radius: 1vh;
+    font-size: 15px;
     font-weight: 600;
     color: #333;
     cursor: pointer;
@@ -154,31 +155,31 @@ body, html {
 }
 
 .scene-card:hover {
-    border-color: #F5A623;
+    border-color: #C8102E;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(245, 166, 35, 0.15);
+    box-shadow: 0 4px 12px rgba(200, 16, 46, 0.15);
 }
 
 .scene-card-selected {
-    border-color: #F5A623;
+    border-color: #C8102E;
     border-width: 2px;
-    background: #FFF8E1;
-    box-shadow: 0 4px 12px rgba(245, 166, 35, 0.2);
+    background: #FFE6E6;
+    box-shadow: 0 4px 12px rgba(200, 16, 46, 0.2);
 }
 
 /* 场景描述 */
 .scene-desc-container {
-    margin: 20px 0 40px 0;
+    margin: 1.5vh 0 2vh 0;
     padding: 0;
 }
 
 .scene-desc-container textarea {
-    min-height: 65px;
+    min-height: 6vh;
     background: #f8f9fa;
     border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 14px;
+    border-radius: 1vh;
+    padding: 1vh;
+    font-size: 13px;
     line-height: 1.6;
     color: #555;
 }
@@ -186,24 +187,24 @@ body, html {
 .scene-desc-container label {
     font-weight: 600;
     color: #555;
-    margin-bottom: 8px;
+    margin-bottom: 0.5vh;
 }
 
 /* 成员卡片行 */
 .roster-row {
-    gap: 20px;
-    margin-bottom: 30px;
+    gap: 1.5vw;
+    margin-bottom: 1.5vh;
 }
 
 /* 成员卡片 */
 .roster-card {
     flex: 1;
     min-width: 200px;
-    padding: 20px;
+    padding: 2vh 1vw;
     background: white;
     border: 2px solid #E5E7EB;
-    border-radius: 12px;
-    font-size: 14px;
+    border-radius: 1vh;
+    font-size: 13px;
     line-height: 1.8;
     color: #555;
     cursor: pointer;
@@ -213,26 +214,26 @@ body, html {
 }
 
 .roster-card:hover {
-    border-color: #F5A623;
+    border-color: #C8102E;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .roster-card-selected {
-    border-color: #F5A623;
+    border-color: #C8102E;
     border-width: 2px;
-    background: #FFF8E1;
+    background: #FFE6E6;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 /* 按钮 */
 .secondary-btn {
-    padding: 10px 24px;
+    padding: 1vh 1.5vw;
     background: white;
     border: 2px solid #E5E7EB;
-    border-radius: 8px;
+    border-radius: 1vh;
     color: #666;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -244,21 +245,22 @@ body, html {
 
 .start-game-btn {
     width: 100%;
-    padding: 18px;
-    background: linear-gradient(135deg, #F5A623 0%, #E87E04 100%);
+    padding: 2vh;
+    background: #C8102E;
     border: none;
-    border-radius: 12px;
+    border-radius: 1vh;
     color: white;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin: 20px 0;
+    margin: 1.5vh 0;
 }
 
 .start-game-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(245, 166, 35, 0.4);
+    box-shadow: 0 8px 20px rgba(200, 16, 46, 0.4);
+    background: #D32F2F;
 }
 
 .back-link-btn {
@@ -420,13 +422,6 @@ body, html {
     font-weight: 700 !important;
     display: inline-block !important;
     margin-bottom: 8px !important;
-}
-
-/* emoji 头像稍大 */
-.chat-box-container .message.bot p:first-child,
-.chat-box-container [data-testid="bot"] p:first-child {
-    font-size: 18px !important;
-    line-height: 1.6 !important;
 }
 
 /* 去掉Gradio 6.2的嵌套wrapper样式 */
@@ -823,6 +818,32 @@ body, html {
     border-color: #4A90E2;
 }
 
+/* 主场景卡片按钮 - 更醒目的样式 */
+.scenario-card-main {
+    background: #C8102E !important;
+    border: none !important;
+    border-radius: 20px !important;
+    padding: 40px 60px !important;
+    cursor: pointer !important;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    min-height: 120px !important;
+    width: 100% !important;
+    max-width: 600px !important;
+    margin: 20px auto !important;
+    box-shadow: 0 8px 30px rgba(200, 16, 46, 0.3) !important;
+    font-size: 32px !important;
+    font-weight: 900 !important;
+    color: white !important;
+    letter-spacing: 2px !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.scenario-card-main:hover {
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow: 0 15px 40px rgba(200, 16, 46, 0.5) !important;
+    background: #D32F2F !important;
+}
+
 /* 页脚 */
 .footer-action {
     text-align: center;
@@ -851,28 +872,60 @@ body, html {
 .report-buttons {
     position: fixed;
     bottom: 30px;
-    right: 30px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     gap: 15px;
     z-index: 100;
+    justify-content: center;
 }
 
 /* 按钮样式统一 */
+.btn-light {
+    background: white;
+    color: #333;
+    padding: 10px 20px;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 40px;
+    min-width: 120px;
+    max-width: 160px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-light:hover {
+    border-color: #999;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .btn-purple {
     background: linear-gradient(135deg, #8E7CC3 0%, #6C5B7B 100%);
     color: white;
-    padding: 14px 28px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 10px;
-    font-size: 16px;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 0.3s ease;
+    height: 40px;
+    min-width: 120px;
+    max-width: 160px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-purple:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 20px rgba(142, 124, 195, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(142, 124, 195, 0.4);
     filter: brightness(1.1);
 }
 
